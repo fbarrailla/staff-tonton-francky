@@ -7,9 +7,12 @@ import { AuthProvider } from './contexts/AuthContext'
 import { ThemeProvider } from './contexts/ThemeContext'
 import { ToastProvider } from './contexts/ToastContext'
 
+// Strip trailing slash so route matching works (BASE_URL is always "/<base>/")
+const basename = import.meta.env.BASE_URL.replace(/\/$/, '') || '/'
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <ThemeProvider>
         <ToastProvider>
           <AuthProvider>

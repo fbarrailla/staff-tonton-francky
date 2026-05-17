@@ -100,6 +100,36 @@ supabase/
 - `number_of_days` est inclusif (du jour de début au jour de fin).
 - Les arrêts maladie ne décomptent **jamais** du quota mensuel.
 
+## Déploiement — GitHub Pages
+
+Le workflow `.github/workflows/deploy.yml` publie automatiquement le site sur
+GitHub Pages à chaque push sur `main`.
+
+**Configuration en deux étapes :**
+
+1. **Activer Pages** — Repo → *Settings* → *Pages* → **Source : GitHub Actions**.
+2. **Ajouter les secrets** (Settings → Secrets and variables → Actions) :
+   - `VITE_SUPABASE_URL`
+   - `VITE_SUPABASE_ANON_KEY`
+
+Après le premier déploiement, le site est accessible à
+[https://fbarrailla.github.io/staff-tonton-francky/](https://fbarrailla.github.io/staff-tonton-francky/).
+
+> Le routage SPA fonctionne aussi sur les liens profonds (`/equipe/:id`,
+> `/calendrier`, etc.) grâce à un `404.html` qui sert la même page que
+> `index.html`.
+
+### Domaine racine ou custom domain
+
+Si vous déployez sur un sous-domaine ou domaine personnalisé (donc à la racine),
+construisez avec `VITE_BASE=/` :
+
+```bash
+VITE_BASE=/ npm run build
+```
+
+ou ajoutez `env: { VITE_BASE: '/' }` à l'étape *Build* du workflow.
+
 ## Roadmap suggérée
 
 - Câbler les hooks React aux requêtes Supabase (actuellement le store local
