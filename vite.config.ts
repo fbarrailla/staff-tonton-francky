@@ -2,9 +2,10 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'node:path'
 
-// GitHub Pages serves project sites at https://<user>.github.io/<repo>/
-// Override via VITE_BASE=/ for previews/custom domains/root deployment.
-const base = process.env.VITE_BASE ?? '/staff-tonton-francky/'
+// Deployed at the root of the custom domain (staff.tontonfrancky.com).
+// Override via VITE_BASE=/staff-tonton-francky/ when serving from
+// fbarrailla.github.io/staff-tonton-francky/ instead.
+const base = process.env.VITE_BASE ?? '/'
 
 export default defineConfig({
   base,

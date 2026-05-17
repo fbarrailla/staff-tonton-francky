@@ -112,23 +112,26 @@ GitHub Pages à chaque push sur `main`.
    - `VITE_SUPABASE_URL`
    - `VITE_SUPABASE_ANON_KEY`
 
-Après le premier déploiement, le site est accessible à
-[https://fbarrailla.github.io/staff-tonton-francky/](https://fbarrailla.github.io/staff-tonton-francky/).
+Le site est servi sur le domaine personnalisé
+**[https://staff.tontonfrancky.com](https://staff.tontonfrancky.com)**.
 
-> Le routage SPA fonctionne aussi sur les liens profonds (`/equipe/:id`,
-> `/calendrier`, etc.) grâce à un `404.html` qui sert la même page que
-> `index.html`.
+- `public/CNAME` est embarqué dans le build pour que GitHub Pages conserve
+  le domaine personnalisé à chaque déploiement.
+- Le routage SPA fonctionne aussi sur les liens profonds (`/equipe/:id`,
+  `/calendrier`, etc.) grâce à un `404.html` qui sert la même page que
+  `index.html`.
 
-### Domaine racine ou custom domain
+### Servir depuis `fbarrailla.github.io/staff-tonton-francky/`
 
-Si vous déployez sur un sous-domaine ou domaine personnalisé (donc à la racine),
-construisez avec `VITE_BASE=/` :
+Si vous voulez aussi exposer le site sur l'URL GitHub par défaut, construisez
+avec un sous-chemin :
 
 ```bash
-VITE_BASE=/ npm run build
+VITE_BASE=/staff-tonton-francky/ npm run build
 ```
 
-ou ajoutez `env: { VITE_BASE: '/' }` à l'étape *Build* du workflow.
+ou ajoutez `env: { VITE_BASE: '/staff-tonton-francky/' }` à l'étape *Build*
+du workflow.
 
 ## Roadmap suggérée
 
