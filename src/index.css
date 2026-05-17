@@ -1,0 +1,132 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light — warm cream paper */
+    --paper: 250 246 239;       /* #FAF6EF */
+    --surface: 246 240 226;     /* #F6F0E2 */
+    --raised: 255 252 245;      /* #FFFCF5 */
+    --ink: 44 36 25;            /* #2C2419 — espresso */
+    --ink-soft: 94 79 59;       /* #5E4F3B */
+    --ink-faint: 158 142 119;   /* #9E8E77 */
+    --line: 224 213 188;        /* #E0D5BC */
+    --line-strong: 195 178 145; /* #C3B291 */
+  }
+
+  .dark {
+    /* Dark — espresso night */
+    --paper: 26 21 16;          /* #1A1510 */
+    --surface: 36 29 22;        /* #241D16 */
+    --raised: 48 39 30;         /* #30271E */
+    --ink: 244 235 218;         /* #F4EBDA */
+    --ink-soft: 198 181 152;    /* #C6B598 */
+    --ink-faint: 134 119 96;    /* #867760 */
+    --line: 60 50 38;           /* #3C3226 */
+    --line-strong: 88 73 55;    /* #584937 */
+  }
+
+  html, body, #root {
+    height: 100%;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: 'ss01', 'ss02', 'cv11';
+  }
+
+  body {
+    @apply bg-paper text-ink font-sans antialiased;
+    font-feature-settings: 'ss01', 'cv11';
+  }
+
+  /* Subtle paper grain in light mode only */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image:
+      radial-gradient(rgba(94, 79, 59, 0.035) 1px, transparent 1px);
+    background-size: 3px 3px;
+    opacity: 0.7;
+  }
+  .dark body::before {
+    background-image:
+      radial-gradient(rgba(244, 235, 218, 0.018) 1px, transparent 1px);
+    opacity: 1;
+  }
+
+  #root {
+    position: relative;
+    z-index: 1;
+  }
+
+  ::selection {
+    background: rgb(230 107 43 / 0.25);
+    color: rgb(var(--ink));
+  }
+
+  /* Focus rings */
+  :focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgb(230 107 43 / 0.32);
+    border-radius: 6px;
+  }
+
+  /* Number tabular alignment */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+  }
+}
+
+@layer components {
+  .display {
+    @apply font-display tracking-tightish;
+    font-optical-sizing: auto;
+    font-variation-settings: 'opsz' 96;
+  }
+  .display-tight {
+    @apply font-display tracking-tightish;
+    font-optical-sizing: auto;
+    font-variation-settings: 'opsz' 144;
+  }
+  .label-caps {
+    @apply uppercase tracking-caps text-[11px] font-medium text-ink-faint;
+  }
+
+  .surface-card {
+    @apply bg-raised rounded-lg border border-line shadow-soft;
+  }
+
+  .surface-flat {
+    @apply bg-surface rounded-lg border border-line;
+  }
+
+  /* Custom scrollbar */
+  .nice-scroll::-webkit-scrollbar { width: 10px; height: 10px; }
+  .nice-scroll::-webkit-scrollbar-thumb {
+    background: rgb(var(--line-strong));
+    border-radius: 999px;
+    border: 2px solid rgb(var(--paper));
+  }
+  .nice-scroll::-webkit-scrollbar-track { background: transparent; }
+}
+
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+  .text-pretty { text-wrap: pretty; }
+
+  .grid-stripes {
+    background-image: repeating-linear-gradient(
+      135deg,
+      rgb(var(--line) / 0.4) 0 1px,
+      transparent 1px 7px
+    );
+  }
+}
