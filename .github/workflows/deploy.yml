@@ -30,10 +30,13 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          # Supabase credentials — set as repo secrets:
-          # Settings → Secrets and variables → Actions → New repository secret
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          # Publishable (anon) Supabase credentials — these are designed for
+          # client-side use, end up in the bundle either way, and are gated
+          # by RLS. Keeping them inline avoids the "set the secret and
+          # remember to re-deploy" dance. Rotate by editing this file.
+          # NEVER inline the service_role / secret key here.
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || 'https://bcjjofdnyotmfhsuvkut.supabase.co' }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || 'sb_publishable_FFFgMMec4ijm1RUg4trbBw_GcjhYj4M' }}
 
       - name: SPA fallback (copy index.html to 404.html)
         run: cp dist/index.html dist/404.html
