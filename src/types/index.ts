@@ -52,6 +52,33 @@ export interface SickLeave {
   updated_at: string
 }
 
+export type ApplicantStatus = 'nouveau' | 'en_revue' | 'entretien' | 'embauche' | 'refuse'
+
+export interface Applicant {
+  id: UUID
+  full_name: string
+  email: string
+  phone: string | null
+  skills: string[]
+  applied_position: string | null
+  status: ApplicantStatus
+  cv_url: string | null                 // path in `applicants` bucket
+  motivation_letter_url: string | null  // path in `applicants` bucket
+  portfolio_url: string | null          // external URL
+  admin_note: string | null
+  applied_at: string                    // ISO date
+  created_at: string
+  updated_at: string
+}
+
+export const APPLICANT_STATUS_LABEL: Record<ApplicantStatus, string> = {
+  nouveau: 'Nouveau',
+  en_revue: 'En revue',
+  entretien: 'Entretien',
+  embauche: 'Embauché·e',
+  refuse: 'Refusé·e',
+}
+
 export interface DocumentRecord {
   id: UUID
   employee_id: UUID

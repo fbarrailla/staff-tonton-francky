@@ -2,6 +2,7 @@ import { NavLink } from 'react-router-dom'
 import {
   LayoutDashboard,
   Users,
+  UserPlus,
   CalendarDays,
   Plane,
   Stethoscope,
@@ -12,6 +13,7 @@ import { cn } from '@/lib/utils'
 const items = [
   { to: '/', label: 'Bord', icon: LayoutDashboard, end: true },
   { to: '/equipe', label: 'Équipe', icon: Users },
+  { to: '/candidats', label: 'Cand.', icon: UserPlus },
   { to: '/calendrier', label: 'Cal.', icon: CalendarDays },
   { to: '/conges', label: 'Congés', icon: Plane },
   { to: '/arrets-maladie', label: 'Maladie', icon: Stethoscope },
@@ -21,7 +23,7 @@ const items = [
 export function MobileNav() {
   return (
     <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-paper/95 backdrop-blur border-t border-line">
-      <ul className="grid grid-cols-6">
+      <ul className="grid grid-cols-7">
         {items.map(({ to, label, icon: Icon, end }) => (
           <li key={to}>
             <NavLink
@@ -34,7 +36,7 @@ export function MobileNav() {
                 )
               }
             >
-              <Icon size={18} strokeWidth={1.75} />
+              <Icon size={17} strokeWidth={1.75} />
               {label}
             </NavLink>
           </li>

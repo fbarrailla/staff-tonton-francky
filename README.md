@@ -30,13 +30,14 @@ Ouvrez ensuite [http://localhost:5173](http://localhost:5173).
 ## Configuration Supabase
 
 1. Créez un projet sur [supabase.com](https://supabase.com).
-2. Dans **SQL Editor**, collez le contenu de [`supabase/schema.sql`](./supabase/schema.sql)
-   et exécutez. Cela crée :
-   - Tables : `employees`, `employee_days_off`, `employee_sick_leaves`, `employee_documents`
+2. Dans **SQL Editor**, collez le contenu de [`supabase/schema.sql`](./supabase/schema.sql),
+   puis de [`supabase/applicants.sql`](./supabase/applicants.sql), et exécutez. Cela crée :
+   - Tables : `employees`, `employee_days_off`, `employee_sick_leaves`, `employee_documents`, `applicants`
    - Vue : `v_employee_monthly_balance` (soldes par mois)
    - Triggers `updated_at`
    - Row Level Security (lecture/écriture pour les utilisateurs authentifiés)
-   - Buckets de stockage : `avatars` (public) et `medical-certificates` (privé)
+   - Buckets de stockage : `avatars` (public), `medical-certificates` (privé)
+     et `applicants` (privé — CV + lettres de motivation)
    - Policies de stockage associées
 3. Dans **Authentication → Providers**, activez **Email**, puis créez
    un·e utilisateur·trice administrateur·trice depuis l'onglet **Users**.
@@ -79,6 +80,9 @@ supabase/
 - **Connexion / déconnexion** par e-mail + mot de passe (Supabase Auth).
 - **Équipe** — CRUD complet, recherche, filtres rôle / statut / compétences,
   upload de photo de profil.
+- **Candidats** — pipeline de recrutement (nouveau · en revue · entretien ·
+  embauché · refusé), CV + lettre de motivation en pièce jointe (privé,
+  signed URLs), lien portfolio externe, note interne.
 - **Calendrier** mensuel avec navigation, filtres et code couleur :
   orange = congé approuvé, jaune = en attente, gris = refusé, rose = arrêt
   maladie, vert = en poste. Ajout rapide depuis n'importe quelle journée.

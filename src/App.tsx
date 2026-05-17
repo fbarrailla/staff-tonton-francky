@@ -8,6 +8,8 @@ import { CalendarPage } from './pages/CalendarPage'
 import { DaysOffPage } from './pages/DaysOffPage'
 import { SickLeavesPage } from './pages/SickLeavesPage'
 import { SettingsPage } from './pages/SettingsPage'
+import { Applicants } from './pages/Applicants'
+import { ApplicantDetail } from './pages/ApplicantDetail'
 import { Spinner } from './components/ui/Spinner'
 import { useStoreStatus } from './hooks/useStore'
 
@@ -82,6 +84,22 @@ export default function App() {
         element={
           <RequireAuth>
             <EmployeeDetail />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/candidats"
+        element={
+          <RequireAuth>
+            <Applicants />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/candidats/:id"
+        element={
+          <RequireAuth>
+            <ApplicantDetail />
           </RequireAuth>
         }
       />

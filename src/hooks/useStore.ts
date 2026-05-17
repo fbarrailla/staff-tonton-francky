@@ -18,6 +18,15 @@ export function useEmployee(id: string | undefined) {
   return id ? employees.find((e) => e.id === id) ?? null : null
 }
 
+export function useApplicants() {
+  return useSyncExternalStore(subscribe, snapshot.applicants, snapshot.applicants)
+}
+
+export function useApplicant(id: string | undefined) {
+  const applicants = useApplicants()
+  return id ? applicants.find((a) => a.id === id) ?? null : null
+}
+
 export function useStoreStatus() {
   const loading = useSyncExternalStore(subscribe, snapshot.loading, snapshot.loading)
   const hydrated = useSyncExternalStore(subscribe, snapshot.hydrated, snapshot.hydrated)

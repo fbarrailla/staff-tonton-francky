@@ -2,17 +2,19 @@ import { NavLink } from 'react-router-dom'
 import {
   LayoutDashboard,
   Users,
+  UserPlus,
   CalendarDays,
   Plane,
   Stethoscope,
   Settings,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { useDaysOff } from '@/hooks/useStore'
+import { useApplicants, useDaysOff } from '@/hooks/useStore'
 
 const items = [
   { to: '/', label: 'Tableau de bord', icon: LayoutDashboard, end: true },
   { to: '/equipe', label: 'Équipe', icon: Users },
+  { to: '/candidats', label: 'Candidats', icon: UserPlus },
   { to: '/calendrier', label: 'Calendrier', icon: CalendarDays },
   { to: '/conges', label: 'Congés', icon: Plane },
   { to: '/arrets-maladie', label: 'Arrêts maladie', icon: Stethoscope },
@@ -21,7 +23,9 @@ const items = [
 
 export function Sidebar() {
   const daysOff = useDaysOff()
+  const applicants = useApplicants()
   const pendingCount = daysOff.filter((d) => d.status === 'pending').length
+  const newApplicants = applicants.filter((a) => a.status === 'nouveau').length
 
   return (
     <aside className="hidden lg:flex w-[248px] shrink-0 flex-col border-r border-line bg-surface/40 backdrop-blur-sm">
@@ -74,6 +78,11 @@ export function Sidebar() {
                     {to === '/conges' && pendingCount > 0 && (
                       <span className="ml-auto tabular text-[10.5px] bg-pending/15 text-pending px-1.5 py-0.5 rounded">
                         {pendingCount}
+                      </span>
+                    )}
+                    {to === '/candidats' && newApplicants > 0 && (
+                      <span className="ml-auto tabular text-[10.5px] bg-tonton-500/15 text-tonton-700 dark:text-tonton-300 px-1.5 py-0.5 rounded">
+                        {newApplicants}
                       </span>
                     )}
                   </>

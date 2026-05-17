@@ -49,8 +49,32 @@ export async function uploadCertificate(file: File): Promise<string> {
   return path
 }
 
+/**
+ * Upload an applicant document (CV or motivation letter) to the private
+ * `applicants` bucket. Returns the storage path so it can be persisted and
+ * signed on demand at view time.
+ */
+export async function uploadApplicantFile(
+  file: File,
+  kind: 'cv' | 'motivation' = 'cv',
+): Promise<string> {
+  const c = client()
+  const path = `${kind}/${rand()}.${safeExt(file.name, 'pdf')}`
+  const { error } = await c.storage.from('applicants').upload(path, file, {
+    cacheControl: '3600',
+    upsert: false,
+    contentType: file.type || undefined,
+  })
+  if (error) throw new Error(error.message)
+  return path
+}
+
 /** Generate a short-lived signed URL for a private object. */
-export async function signedUrl(bucket: 'medical-certificates', path: string, ttlSec = 300) {
+export async function signedUrl(
+  bucket: 'medical-certificates' | 'applicants',
+  path: string,
+  ttlSec = 300,
+) {
   const c = client()
   const { data, error } = await c.storage.from(bucket).createSignedUrl(path, ttlSec)
   if (error) throw new Error(error.message)
