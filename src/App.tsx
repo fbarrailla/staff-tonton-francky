@@ -9,18 +9,51 @@ import { DaysOffPage } from './pages/DaysOffPage'
 import { SickLeavesPage } from './pages/SickLeavesPage'
 import { SettingsPage } from './pages/SettingsPage'
 import { Spinner } from './components/ui/Spinner'
+import { useStoreStatus } from './hooks/useStore'
+
+function FullScreenLoader({ label }: { label?: string }) {
+  return (
+    <div className="min-h-screen grid place-items-center text-ink-soft">
+      <div className="flex flex-col items-center gap-3">
+        <Spinner size={22} />
+        {label && <span className="text-[12.5px] tracking-tightish">{label}</span>}
+      </div>
+    </div>
+  )
+}
 
 function RequireAuth({ children }: { children: JSX.Element }) {
   const { user, loading } = useAuth()
+  const { loading: storeLoading, hydrated, error } = useStoreStatus()
   const location = useLocation()
-  if (loading) {
+
+  if (loading) return <FullScreenLoader />
+  if (!user) return <Navigate to="/connexion" replace state={{ from: location }} />
+
+  if (error && !hydrated) {
     return (
-      <div className="min-h-screen grid place-items-center text-ink-soft">
-        <Spinner size={20} />
+      <div className="min-h-screen grid place-items-center px-6 text-center">
+        <div className="max-w-md">
+          <div className="label-caps mb-2 text-sick">Erreur de connexion à la base</div>
+          <p className="text-[14px] text-ink mb-3">
+            Impossible de récupérer les données depuis Supabase.
+          </p>
+          <p className="text-[12.5px] text-ink-soft font-mono bg-surface border border-line rounded-md p-3">
+            {error}
+          </p>
+          <button
+            onClick={() => location.pathname && window.location.reload()}
+            className="mt-4 text-[12.5px] text-tonton-600 hover:underline"
+          >
+            Réessayer
+          </button>
+        </div>
       </div>
     )
   }
-  if (!user) return <Navigate to="/connexion" replace state={{ from: location }} />
+
+  if (storeLoading && !hydrated) return <FullScreenLoader label="Chargement des données…" />
+
   return children
 }
 

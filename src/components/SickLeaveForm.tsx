@@ -4,7 +4,9 @@ import type { Employee, SickLeave } from '@/types'
 import { Input, Textarea, Select } from './ui/Field'
 import { Button } from './ui/Button'
 import { mutate } from '@/lib/store'
+import { uploadCertificate } from '@/lib/storage'
 import { inclusiveDayCount, todayISO } from '@/lib/utils'
+import { useToast } from '@/contexts/ToastContext'
 import { addDays, format } from 'date-fns'
 
 interface Props {
@@ -16,28 +18,38 @@ interface Props {
 }
 
 export function SickLeaveForm({ employee, employees, initial, onSaved, onCancel }: Props) {
+  const toast = useToast()
   const [employee_id, setEmployeeId] = useState(
     initial?.employee_id ?? employee?.id ?? employees?.[0]?.id ?? '',
   )
   const [start_date, setStart] = useState(initial?.start_date ?? todayISO())
   const [end_date, setEnd] = useState(initial?.end_date ?? format(addDays(new Date(), 2), 'yyyy-MM-dd'))
   const [reason, setReason] = useState(initial?.reason ?? '')
-  const [certUrl, setCertUrl] = useState<string | null>(initial?.medical_certificate_url ?? null)
-  const [certName, setCertName] = useState<string | null>(null)
+  const [certFile, setCertFile] = useState<File | null>(null)
+  const [certName, setCertName] = useState<string | null>(
+    initial?.medical_certificate_url ? 'Certificat joint' : null,
+  )
+  const [keepExistingCert, setKeepExistingCert] = useState<boolean>(
+    !!initial?.medical_certificate_url,
+  )
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [submitting, setSubmitting] = useState(false)
 
   const days = useMemo(() => inclusiveDayCount(start_date, end_date), [start_date, end_date])
 
-  function readFile(f: File) {
-    const reader = new FileReader()
-    reader.onload = () => {
-      setCertUrl(String(reader.result))
-      setCertName(f.name)
-    }
-    reader.readAsDataURL(f)
+  function pickFile(f: File) {
+    setCertFile(f)
+    setCertName(f.name)
+    setKeepExistingCert(false)
   }
 
-  function submit() {
+  function clearCert() {
+    setCertFile(null)
+    setCertName(null)
+    setKeepExistingCert(false)
+  }
+
+  async function submit() {
     const errs: Record<string, string> = {}
     if (!employee_id) errs.employee_id = 'Choisissez un·e salarié·e'
     if (end_date < start_date) errs.end_date = 'La fin doit être après le début'
@@ -45,33 +57,47 @@ export function SickLeaveForm({ employee, employees, initial, onSaved, onCancel 
     setErrors(errs)
     if (Object.keys(errs).length > 0) return
 
-    if (initial) {
-      mutate.updateSickLeave(initial.id, {
-        employee_id,
-        start_date,
-        end_date,
-        number_of_days: days,
-        reason,
-        medical_certificate_url: certUrl,
-      })
-    } else {
-      mutate.addSickLeave({
-        employee_id,
-        start_date,
-        end_date,
-        number_of_days: days,
-        reason,
-        medical_certificate_url: certUrl,
-      })
+    setSubmitting(true)
+    try {
+      let medical_certificate_url: string | null = initial?.medical_certificate_url ?? null
+      if (certFile) {
+        medical_certificate_url = await uploadCertificate(certFile)
+      } else if (!keepExistingCert) {
+        medical_certificate_url = null
+      }
+
+      if (initial) {
+        await mutate.updateSickLeave(initial.id, {
+          employee_id,
+          start_date,
+          end_date,
+          number_of_days: days,
+          reason,
+          medical_certificate_url,
+        })
+      } else {
+        await mutate.addSickLeave({
+          employee_id,
+          start_date,
+          end_date,
+          number_of_days: days,
+          reason,
+          medical_certificate_url,
+        })
+      }
+      onSaved()
+    } catch (e) {
+      toast.error('Enregistrement impossible', e instanceof Error ? e.message : String(e))
+    } finally {
+      setSubmitting(false)
     }
-    onSaved()
   }
 
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault()
-        submit()
+        void submit()
       }}
       className="space-y-5"
     >
@@ -133,17 +159,14 @@ export function SickLeaveForm({ employee, employees, initial, onSaved, onCancel 
 
       <div>
         <div className="text-[12px] font-medium text-ink-soft mb-1.5">Certificat médical (facultatif)</div>
-        {certUrl ? (
+        {certName ? (
           <div className="flex items-center justify-between rounded-md border border-line bg-surface px-3 py-2 text-[12.5px]">
             <span className="inline-flex items-center gap-2 text-ink truncate">
-              <Paperclip size={13} /> {certName ?? 'Document joint'}
+              <Paperclip size={13} /> {certName}
             </span>
             <button
               type="button"
-              onClick={() => {
-                setCertUrl(null)
-                setCertName(null)
-              }}
+              onClick={clearCert}
               className="text-ink-faint hover:text-sick"
               aria-label="Retirer"
             >
@@ -159,7 +182,7 @@ export function SickLeaveForm({ employee, employees, initial, onSaved, onCancel 
               className="sr-only"
               onChange={(e) => {
                 const f = e.target.files?.[0]
-                if (f) readFile(f)
+                if (f) pickFile(f)
               }}
             />
           </label>
@@ -167,10 +190,10 @@ export function SickLeaveForm({ employee, employees, initial, onSaved, onCancel 
       </div>
 
       <div className="flex justify-end gap-2 pt-2 border-t border-line">
-        <Button type="button" variant="ghost" onClick={onCancel}>
+        <Button type="button" variant="ghost" onClick={onCancel} disabled={submitting}>
           Annuler
         </Button>
-        <Button type="submit" variant="primary">
+        <Button type="submit" variant="primary" loading={submitting}>
           {initial ? 'Enregistrer' : 'Créer l\'arrêt'}
         </Button>
       </div>

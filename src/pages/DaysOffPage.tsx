@@ -49,9 +49,13 @@ export function DaysOffPage() {
     rejected: daysOff.filter((d) => d.status === 'rejected').length,
   }
 
-  function approve(d: DayOff) {
-    mutate.updateDayOff(d.id, { status: 'approved' })
-    toast.success('Congé approuvé')
+  async function approve(d: DayOff) {
+    try {
+      await mutate.updateDayOff(d.id, { status: 'approved' })
+      toast.success('Congé approuvé')
+    } catch (e) {
+      toast.error('Action impossible', e instanceof Error ? e.message : String(e))
+    }
   }
 
   function startReject(d: DayOff) {
@@ -59,16 +63,27 @@ export function DaysOffPage() {
     setRejectNote('')
   }
 
-  function confirmReject() {
+  async function confirmReject() {
     if (!rejecting) return
-    mutate.updateDayOff(rejecting.id, { status: 'rejected', admin_note: rejectNote || null })
-    setRejecting(null)
-    toast.info('Congé refusé')
+    try {
+      await mutate.updateDayOff(rejecting.id, {
+        status: 'rejected',
+        admin_note: rejectNote || null,
+      })
+      setRejecting(null)
+      toast.info('Congé refusé')
+    } catch (e) {
+      toast.error('Action impossible', e instanceof Error ? e.message : String(e))
+    }
   }
 
-  function remove(d: DayOff) {
-    mutate.deleteDayOff(d.id)
-    toast.info('Demande supprimée')
+  async function remove(d: DayOff) {
+    try {
+      await mutate.deleteDayOff(d.id)
+      toast.info('Demande supprimée')
+    } catch (e) {
+      toast.error('Suppression impossible', e instanceof Error ? e.message : String(e))
+    }
   }
 
   return (
@@ -148,7 +163,7 @@ export function DaysOffPage() {
                 <div className="flex gap-1.5 flex-wrap">
                   {d.status === 'pending' && (
                     <>
-                      <Button size="sm" variant="primary" iconLeft={<CheckCircle2 size={13} />} onClick={() => approve(d)}>
+                      <Button size="sm" variant="primary" iconLeft={<CheckCircle2 size={13} />} onClick={() => void approve(d)}>
                         Approuver
                       </Button>
                       <Button size="sm" variant="ghost" iconLeft={<XCircle size={13} />} onClick={() => startReject(d)}>
@@ -159,7 +174,7 @@ export function DaysOffPage() {
                   <Button size="sm" variant="ghost" iconLeft={<Edit3 size={13} />} onClick={() => setEditing(d)}>
                     Modifier
                   </Button>
-                  <Button size="sm" variant="ghost" iconLeft={<Trash2 size={13} />} onClick={() => remove(d)} />
+                  <Button size="sm" variant="ghost" iconLeft={<Trash2 size={13} />} onClick={() => void remove(d)} />
                 </div>
               </div>
             )
@@ -212,7 +227,7 @@ export function DaysOffPage() {
         footer={
           <>
             <Button variant="ghost" onClick={() => setRejecting(null)}>Annuler</Button>
-            <Button variant="danger" onClick={confirmReject}>Refuser</Button>
+            <Button variant="danger" onClick={() => void confirmReject()}>Refuser</Button>
           </>
         }
       >

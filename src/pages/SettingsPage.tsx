@@ -1,21 +1,18 @@
 import { useState } from 'react'
-import { Sun, Moon, LogOut, RotateCcw, Database, Languages, Building2, Sparkles } from 'lucide-react'
+import { Sun, Moon, LogOut, Database, Languages, Building2, Sparkles } from 'lucide-react'
 import { Layout } from '@/components/Layout'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Field'
-import { Dialog } from '@/components/ui/Dialog'
 import { useAuth } from '@/contexts/AuthContext'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useToast } from '@/contexts/ToastContext'
-import { mutate } from '@/lib/store'
 import { Avatar } from '@/components/ui/Avatar'
 import { cn } from '@/lib/utils'
 
 export function SettingsPage() {
   const { theme, setTheme } = useTheme()
-  const { user, signOut, isMock } = useAuth()
+  const { user, signOut } = useAuth()
   const toast = useToast()
-  const [confirmReset, setConfirmReset] = useState(false)
   const [quota, setQuota] = useState(4)
   const [businessName, setBusinessName] = useState('Tonton Francky')
 
@@ -104,9 +101,7 @@ export function SettingsPage() {
               <div className="flex-1 min-w-0">
                 <div className="text-[14px] font-medium text-ink truncate">{user?.display_name}</div>
                 <div className="text-[12.5px] text-ink-soft truncate">{user?.email}</div>
-                <div className="text-[11.5px] text-ink-faint mt-1">
-                  {isMock ? 'Session mock locale' : 'Connecté·e via Supabase'}
-                </div>
+                <div className="text-[11.5px] text-ink-faint mt-1">Connecté·e via Supabase</div>
               </div>
               <Button variant="ghost" iconLeft={<LogOut size={14} />} onClick={() => void signOut()}>
                 Se déconnecter
@@ -117,49 +112,13 @@ export function SettingsPage() {
           <section id="donnees" className="surface-card p-6">
             <Heading icon={<Database size={14} />}>Données</Heading>
             <p className="text-[13px] text-ink-soft mt-1 max-w-prose">
-              {isMock
-                ? 'Vous utilisez actuellement la base de démonstration locale (localStorage). Renseignez VITE_SUPABASE_URL et VITE_SUPABASE_ANON_KEY pour passer en mode réel.'
-                : 'Vos données sont synchronisées avec votre projet Supabase.'}
+              Les données sont synchronisées avec votre projet Supabase. Les modifications faites
+              depuis le backoffice sont immédiatement visibles pour les autres utilisateurs
+              connectés.
             </p>
-            {isMock && (
-              <Button
-                variant="secondary"
-                className="mt-4"
-                iconLeft={<RotateCcw size={14} />}
-                onClick={() => setConfirmReset(true)}
-              >
-                Réinitialiser la démo
-              </Button>
-            )}
           </section>
         </div>
       </div>
-
-      <Dialog
-        open={confirmReset}
-        onClose={() => setConfirmReset(false)}
-        title="Réinitialiser la démo ?"
-        description="Toutes vos modifications locales seront remplacées par les données d'origine."
-        footer={
-          <>
-            <Button variant="ghost" onClick={() => setConfirmReset(false)}>Annuler</Button>
-            <Button
-              variant="danger"
-              onClick={() => {
-                mutate.resetDemo()
-                setConfirmReset(false)
-                toast.success('Démo réinitialisée')
-              }}
-            >
-              Réinitialiser
-            </Button>
-          </>
-        }
-      >
-        <p className="text-[13px] text-ink-soft">
-          Cette action ne peut pas être annulée — mais comme c'est une démo, ça reste sans conséquence.
-        </p>
-      </Dialog>
     </Layout>
   )
 }

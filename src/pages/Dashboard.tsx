@@ -97,13 +97,24 @@ export function Dashboard() {
       .slice(0, 6)
   }, [daysOff, sickLeaves, today])
 
-  function approve(id: string) {
-    mutate.updateDayOff(id, { status: 'approved' })
-    toast.success('Demande approuvée', 'Le congé a été validé.')
+  async function approve(id: string) {
+    try {
+      await mutate.updateDayOff(id, { status: 'approved' })
+      toast.success('Demande approuvée', 'Le congé a été validé.')
+    } catch (e) {
+      toast.error('Action impossible', e instanceof Error ? e.message : String(e))
+    }
   }
-  function reject(id: string) {
-    mutate.updateDayOff(id, { status: 'rejected', admin_note: 'Refusé depuis le tableau de bord' })
-    toast.info('Demande refusée', 'Une note a été ajoutée à la demande.')
+  async function reject(id: string) {
+    try {
+      await mutate.updateDayOff(id, {
+        status: 'rejected',
+        admin_note: 'Refusé depuis le tableau de bord',
+      })
+      toast.info('Demande refusée', 'Une note a été ajoutée à la demande.')
+    } catch (e) {
+      toast.error('Action impossible', e instanceof Error ? e.message : String(e))
+    }
   }
 
   return (
@@ -264,7 +275,7 @@ export function Dashboard() {
                         size="sm"
                         variant="primary"
                         iconLeft={<CheckCircle2 size={13} />}
-                        onClick={() => approve(d.id)}
+                        onClick={() => void approve(d.id)}
                       >
                         Approuver
                       </Button>
@@ -272,7 +283,7 @@ export function Dashboard() {
                         size="sm"
                         variant="ghost"
                         iconLeft={<XCircle size={13} />}
-                        onClick={() => reject(d.id)}
+                        onClick={() => void reject(d.id)}
                       >
                         Refuser
                       </Button>

@@ -18,19 +18,16 @@ encre espresso + orange Tonton ».
 
 ```bash
 npm install
-cp .env.example .env.local       # optionnel — voir « Mode Supabase » ci-dessous
+cp .env.example .env.local       # remplir les deux variables — voir ci-dessous
 npm run dev
 ```
 
 Ouvrez ensuite [http://localhost:5173](http://localhost:5173).
 
-> Sans configuration Supabase, l'application bascule automatiquement en
-> **mode démonstration** : un jeu de données complet est généré et persisté
-> dans `localStorage`. Vous pouvez explorer toutes les fonctionnalités, y
-> compris l'authentification (n'importe quel e-mail + mot de passe ≥ 4
-> caractères).
+> L'application requiert un projet Supabase. Sans `VITE_SUPABASE_URL` et
+> `VITE_SUPABASE_ANON_KEY`, la connexion échouera.
 
-## Mode Supabase (production)
+## Configuration Supabase
 
 1. Créez un projet sur [supabase.com](https://supabase.com).
 2. Dans **SQL Editor**, collez le contenu de [`supabase/schema.sql`](./supabase/schema.sql)
@@ -61,12 +58,12 @@ src/
     ui/                primitives (Button, Field, Dialog, …)
     Sidebar.tsx, Topbar.tsx, Layout.tsx, MobileNav.tsx
     EmployeeForm.tsx, DayOffForm.tsx, SickLeaveForm.tsx
-  contexts/            AuthContext, ThemeContext, ToastContext
-  hooks/               useStore (binds React to local store)
+  contexts/            AuthContext (Supabase), ThemeContext, ToastContext
+  hooks/               useStore — reactive bindings to the in-memory cache
   lib/
-    store.ts           local mock store (localStorage), used when Supabase env vars are absent
-    supabase.ts        Supabase client (null when not configured)
-    mockSeed.ts        seed data
+    store.ts           in-memory cache, source of truth = Supabase
+    storage.ts         avatar + medical-certificate uploads
+    supabase.ts        Supabase client
     derived.ts         today-status & monthly balance computations
     utils.ts
   pages/
@@ -135,9 +132,8 @@ du workflow.
 
 ## Roadmap suggérée
 
-- Câbler les hooks React aux requêtes Supabase (actuellement le store local
-  est la source de vérité). Le client Supabase est déjà initialisé dans
-  `src/lib/supabase.ts` quand les variables d'environnement sont présentes.
+- Realtime — souscriptions Supabase pour propager les changements à tous les
+  clients connectés en temps réel.
 - Notifications par e-mail à l'approbation / au refus.
 - Export CSV des congés / arrêts pour la paie.
 - Rôles non-admin (salarié·e voyant uniquement ses propres données).

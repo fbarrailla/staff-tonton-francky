@@ -11,6 +11,7 @@ import { SkillChip } from '@/components/ui/SkillChip'
 import { Tabs } from '@/components/ui/Tabs'
 import { useDaysOff, useEmployees, useSickLeaves } from '@/hooks/useStore'
 import { mutate } from '@/lib/store'
+import { uploadAvatar } from '@/lib/storage'
 import { COMMON_SKILLS, ROLE_LABEL, type EmployeeRole, type Employee } from '@/types'
 import { employeeStatusToday } from '@/lib/derived'
 import { EmployeeForm } from '@/components/EmployeeForm'
@@ -30,6 +31,7 @@ export function Employees() {
   const [skills, setSkills] = useState<string[]>([])
   const [status, setStatus] = useState<StatusFilter>('all')
   const [openAdd, setOpenAdd] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
 
   const enriched = useMemo(
     () =>
@@ -67,10 +69,22 @@ export function Employees() {
     return Array.from(set).sort((a, b) => a.localeCompare(b, 'fr'))
   }, [employees])
 
-  function handleAdd(data: Omit<Employee, 'id' | 'created_at' | 'updated_at'>) {
-    mutate.addEmployee(data)
-    setOpenAdd(false)
-    toast.success('Salarié·e ajouté·e', data.full_name)
+  async function handleAdd(
+    data: Omit<Employee, 'id' | 'created_at' | 'updated_at'>,
+    avatarFile: File | null,
+  ) {
+    setSubmitting(true)
+    try {
+      let avatar_url = data.avatar_url
+      if (avatarFile) avatar_url = await uploadAvatar(avatarFile)
+      await mutate.addEmployee({ ...data, avatar_url })
+      setOpenAdd(false)
+      toast.success('Salarié·e ajouté·e', data.full_name)
+    } catch (e) {
+      toast.error('Ajout impossible', e instanceof Error ? e.message : String(e))
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -236,6 +250,7 @@ export function Employees() {
           onSubmit={handleAdd}
           onCancel={() => setOpenAdd(false)}
           submitLabel="Ajouter"
+          submitting={submitting}
         />
       </Dialog>
     </Layout>

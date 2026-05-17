@@ -6,6 +6,7 @@ import { Button } from './ui/Button'
 import { mutate } from '@/lib/store'
 import { inclusiveDayCount, todayISO } from '@/lib/utils'
 import { monthlyDayOffBalance } from '@/lib/derived'
+import { useToast } from '@/contexts/ToastContext'
 import { addDays, format } from 'date-fns'
 
 interface Props {
@@ -18,6 +19,7 @@ interface Props {
 }
 
 export function DayOffForm({ employee, employees, existingDaysOff, initial, onSaved, onCancel }: Props) {
+  const toast = useToast()
   const [employee_id, setEmployeeId] = useState<string>(
     initial?.employee_id ?? employee?.id ?? employees?.[0]?.id ?? '',
   )
@@ -27,6 +29,7 @@ export function DayOffForm({ employee, employees, existingDaysOff, initial, onSa
   const [status, setStatus] = useState<DayOff['status']>(initial?.status ?? 'pending')
   const [override, setOverride] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [submitting, setSubmitting] = useState(false)
 
   const days = useMemo(() => inclusiveDayCount(start_date, end_date), [start_date, end_date])
 
@@ -37,7 +40,7 @@ export function DayOffForm({ employee, employees, existingDaysOff, initial, onSa
 
   const wouldExceed = balance ? balance.used + days > balance.quota : false
 
-  function submit() {
+  async function submit() {
     const errs: Record<string, string> = {}
     if (!employee_id) errs.employee_id = 'Choisissez un·e salarié·e'
     if (end_date < start_date) errs.end_date = 'La fin doit être après le début'
@@ -48,27 +51,36 @@ export function DayOffForm({ employee, employees, existingDaysOff, initial, onSa
     setErrors(errs)
     if (Object.keys(errs).length > 0) return
 
-    if (initial) {
-      mutate.updateDayOff(initial.id, { employee_id, start_date, end_date, number_of_days: days, reason, status })
-    } else {
-      mutate.addDayOff({
-        employee_id,
-        start_date,
-        end_date,
-        number_of_days: days,
-        status,
-        reason,
-        admin_note: override ? 'Override admin — dépassement du quota' : null,
-      })
+    setSubmitting(true)
+    try {
+      if (initial) {
+        await mutate.updateDayOff(initial.id, {
+          employee_id, start_date, end_date, number_of_days: days, reason, status,
+        })
+      } else {
+        await mutate.addDayOff({
+          employee_id,
+          start_date,
+          end_date,
+          number_of_days: days,
+          status,
+          reason,
+          admin_note: override ? 'Override admin — dépassement du quota' : null,
+        })
+      }
+      onSaved()
+    } catch (e) {
+      toast.error('Enregistrement impossible', e instanceof Error ? e.message : String(e))
+    } finally {
+      setSubmitting(false)
     }
-    onSaved()
   }
 
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault()
-        submit()
+        void submit()
       }}
       className="space-y-5"
     >
@@ -175,10 +187,10 @@ export function DayOffForm({ employee, employees, existingDaysOff, initial, onSa
       </Select>
 
       <div className="flex justify-end gap-2 pt-2 border-t border-line">
-        <Button type="button" variant="ghost" onClick={onCancel}>
+        <Button type="button" variant="ghost" onClick={onCancel} disabled={submitting}>
           Annuler
         </Button>
-        <Button type="submit" variant="primary">
+        <Button type="submit" variant="primary" loading={submitting}>
           {initial ? 'Enregistrer' : 'Créer la demande'}
         </Button>
       </div>

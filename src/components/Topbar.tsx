@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { Search, Sun, Moon, LogOut, ChevronDown, Plus } from 'lucide-react'
+import { Search, Sun, Moon, LogOut, ChevronDown } from 'lucide-react'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useAuth } from '@/contexts/AuthContext'
 import { Avatar } from './ui/Avatar'
@@ -13,7 +13,7 @@ interface Props {
 
 export function Topbar({ title, eyebrow }: Props) {
   const { theme, toggle } = useTheme()
-  const { user, signOut, isMock } = useAuth()
+  const { user, signOut } = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
 
   return (
@@ -77,7 +77,7 @@ export function Topbar({ title, eyebrow }: Props) {
                 {user?.display_name || user?.email}
               </span>
               <span className="text-[10.5px] text-ink-faint tracking-tightish">
-                {isMock ? 'Démo locale' : 'Connecté·e'}
+                Connecté·e
               </span>
             </div>
             <ChevronDown size={13} className="text-ink-faint" />
@@ -124,12 +124,6 @@ export function Topbar({ title, eyebrow }: Props) {
           )}
         </div>
       </div>
-      {isMock && (
-        <div className="px-5 lg:px-8 py-1.5 border-t border-line bg-tonton-500/8 text-[11.5px] text-tonton-700 dark:text-tonton-300 tracking-tightish flex items-center gap-2 justify-center">
-          <Plus size={11} className="opacity-70" />
-          Mode démonstration · les données sont locales (localStorage). Configurez Supabase pour passer en mode réel.
-        </div>
-      )}
     </header>
   )
 }

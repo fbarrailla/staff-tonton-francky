@@ -10,7 +10,10 @@ import { cn, todayISO } from '@/lib/utils'
 
 interface Props {
   initial?: Partial<Employee>
-  onSubmit: (data: Omit<Employee, 'id' | 'created_at' | 'updated_at'>) => void
+  onSubmit: (
+    data: Omit<Employee, 'id' | 'created_at' | 'updated_at'>,
+    avatarFile: File | null,
+  ) => void | Promise<void>
   onCancel: () => void
   submitting?: boolean
   submitLabel?: string
@@ -27,13 +30,23 @@ const EMPTY: Omit<Employee, 'id' | 'created_at' | 'updated_at'> = {
   status: 'active',
 }
 
-export function EmployeeForm({ initial, onSubmit, onCancel, submitting, submitLabel = 'Enregistrer' }: Props) {
+export function EmployeeForm({
+  initial,
+  onSubmit,
+  onCancel,
+  submitting,
+  submitLabel = 'Enregistrer',
+}: Props) {
   const [state, setState] = useState({ ...EMPTY, ...initial })
+  const [avatarFile, setAvatarFile] = useState<File | null>(null)
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(initial?.avatar_url ?? null)
   const [skillDraft, setSkillDraft] = useState('')
   const [errors, setErrors] = useState<Record<string, string>>({})
 
   useEffect(() => {
     setState({ ...EMPTY, ...initial })
+    setAvatarPreview(initial?.avatar_url ?? null)
+    setAvatarFile(null)
   }, [initial])
 
   const set = <K extends keyof typeof state>(k: K, v: (typeof state)[K]) =>
@@ -48,9 +61,16 @@ export function EmployeeForm({ initial, onSubmit, onCancel, submitting, submitLa
   }
 
   function pickAvatarFile(file: File) {
+    setAvatarFile(file)
     const reader = new FileReader()
-    reader.onload = () => set('avatar_url', String(reader.result))
+    reader.onload = () => setAvatarPreview(String(reader.result))
     reader.readAsDataURL(file)
+  }
+
+  function clearAvatar() {
+    setAvatarFile(null)
+    setAvatarPreview(null)
+    set('avatar_url', null)
   }
 
   function submit() {
@@ -58,7 +78,9 @@ export function EmployeeForm({ initial, onSubmit, onCancel, submitting, submitLa
     if (!state.full_name.trim()) errs.full_name = 'Nom complet requis'
     if (!/.+@.+\..+/.test(state.email)) errs.email = 'E-mail invalide'
     setErrors(errs)
-    if (Object.keys(errs).length === 0) onSubmit(state)
+    if (Object.keys(errs).length === 0) {
+      void onSubmit(state, avatarFile)
+    }
   }
 
   return (
@@ -72,7 +94,7 @@ export function EmployeeForm({ initial, onSubmit, onCancel, submitting, submitLa
       {/* Avatar */}
       <div className="flex items-center gap-5">
         <div className="relative group">
-          <Avatar name={state.full_name || '??'} src={state.avatar_url} size={80} />
+          <Avatar name={state.full_name || '??'} src={avatarPreview} size={80} />
           <label className="absolute inset-0 grid place-items-center rounded-full bg-warm-900/45 opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity text-white">
             <Camera size={18} />
             <input
@@ -106,13 +128,13 @@ export function EmployeeForm({ initial, onSubmit, onCancel, submitting, submitLa
                 }}
               />
             </label>
-            {state.avatar_url && (
+            {avatarPreview && (
               <Button
                 type="button"
                 size="sm"
                 variant="ghost"
                 iconLeft={<Trash2 size={13} />}
-                onClick={() => set('avatar_url', null)}
+                onClick={clearAvatar}
               >
                 Retirer
               </Button>
@@ -210,7 +232,7 @@ export function EmployeeForm({ initial, onSubmit, onCancel, submitting, submitLa
       />
 
       <div className="flex justify-end gap-2 pt-2 border-t border-line">
-        <Button type="button" variant="ghost" onClick={onCancel}>
+        <Button type="button" variant="ghost" onClick={onCancel} disabled={submitting}>
           Annuler
         </Button>
         <Button type="submit" variant="primary" loading={submitting}>

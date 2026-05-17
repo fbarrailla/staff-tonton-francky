@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import { supabase, supabaseConfigured } from '@/lib/supabase'
+import { clearStore, hydrate } from '@/lib/store'
 import type { AuthUser } from '@/types'
 
 interface AuthState {
@@ -7,7 +8,6 @@ interface AuthState {
   loading: boolean
   signIn: (email: string, password: string) => Promise<{ error?: string }>
   signOut: () => Promise<void>
-  isMock: boolean
 }
 
 const Ctx = createContext<AuthState>({
@@ -15,15 +15,19 @@ const Ctx = createContext<AuthState>({
   loading: true,
   signIn: async () => ({ error: 'not implemented' }),
   signOut: async () => {},
-  isMock: !supabaseConfigured,
 })
 
-const MOCK_KEY = 'tf-mock-session'
-const DEMO_USER: AuthUser = {
-  id: 'mock-admin',
-  email: 'admin@tontonfrancky.com',
-  display_name: 'François — Gérant',
-  avatar_url: null,
+function mapUser(session: { user: { id: string; email?: string; user_metadata?: Record<string, unknown> } }): AuthUser {
+  const u = session.user
+  return {
+    id: u.id,
+    email: u.email ?? '',
+    display_name:
+      (u.user_metadata?.display_name as string | undefined) ??
+      u.email?.split('@')[0] ??
+      'Utilisateur',
+    avatar_url: (u.user_metadata?.avatar_url as string | null | undefined) ?? null,
+  }
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -31,90 +35,53 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    if (!supabaseConfigured || !supabase) {
+      // Hard requirement now — there is no demo mode anymore.
+      setLoading(false)
+      return
+    }
+
     let active = true
-
-    if (supabase) {
-      supabase.auth.getSession().then(({ data }) => {
-        if (!active) return
-        const s = data.session
-        if (s?.user) {
-          setUser({
-            id: s.user.id,
-            email: s.user.email ?? '',
-            display_name:
-              (s.user.user_metadata?.display_name as string | undefined) ??
-              s.user.email?.split('@')[0] ??
-              'Utilisateur',
-            avatar_url: (s.user.user_metadata?.avatar_url as string | null | undefined) ?? null,
-          })
-        }
-        setLoading(false)
-      })
-
-      const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-        if (!session?.user) setUser(null)
-        else
-          setUser({
-            id: session.user.id,
-            email: session.user.email ?? '',
-            display_name:
-              (session.user.user_metadata?.display_name as string | undefined) ??
-              session.user.email?.split('@')[0] ??
-              'Utilisateur',
-            avatar_url:
-              (session.user.user_metadata?.avatar_url as string | null | undefined) ?? null,
-          })
-      })
-
-      return () => {
-        active = false
-        sub.subscription.unsubscribe()
-      }
-    } else {
-      // Mock session via localStorage
-      const raw = localStorage.getItem(MOCK_KEY)
-      if (raw) {
-        try {
-          setUser(JSON.parse(raw) as AuthUser)
-        } catch {
-          /* noop */
-        }
+    supabase.auth.getSession().then(({ data }) => {
+      if (!active) return
+      if (data.session?.user) {
+        setUser(mapUser(data.session))
+        void hydrate().catch(() => {})
       }
       setLoading(false)
+    })
+
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session?.user) {
+        setUser(null)
+        clearStore()
+      } else {
+        setUser(mapUser(session))
+        void hydrate().catch(() => {})
+      }
+    })
+
+    return () => {
+      active = false
+      sub.subscription.unsubscribe()
     }
   }, [])
 
   const signIn: AuthState['signIn'] = async (email, password) => {
-    if (supabase) {
-      const { error } = await supabase.auth.signInWithPassword({ email, password })
-      if (error) return { error: error.message }
-      return {}
-    }
-    // Mock: accept any non-empty email + password >= 4 chars
-    if (!email || password.length < 4) {
-      return { error: 'Identifiants invalides' }
-    }
-    const u: AuthUser = {
-      ...DEMO_USER,
-      email,
-      display_name: email.split('@')[0] || DEMO_USER.display_name,
-    }
-    localStorage.setItem(MOCK_KEY, JSON.stringify(u))
-    setUser(u)
+    if (!supabase) return { error: 'Supabase non configuré.' }
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    if (error) return { error: error.message }
     return {}
   }
 
   const signOut = async () => {
-    if (supabase) {
-      await supabase.auth.signOut()
-    } else {
-      localStorage.removeItem(MOCK_KEY)
-    }
+    if (supabase) await supabase.auth.signOut()
     setUser(null)
+    clearStore()
   }
 
   return (
-    <Ctx.Provider value={{ user, loading, signIn, signOut, isMock: !supabaseConfigured }}>
+    <Ctx.Provider value={{ user, loading, signIn, signOut }}>
       {children}
     </Ctx.Provider>
   )

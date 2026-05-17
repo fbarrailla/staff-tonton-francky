@@ -20,6 +20,7 @@ import { Dialog } from '@/components/ui/Dialog'
 import { EmployeeForm } from '@/components/EmployeeForm'
 import { useDaysOff, useEmployee, useSickLeaves } from '@/hooks/useStore'
 import { mutate } from '@/lib/store'
+import { uploadAvatar } from '@/lib/storage'
 import { useToast } from '@/contexts/ToastContext'
 import { COMMON_SKILLS, ROLE_LABEL, type Employee } from '@/types'
 import { employeeStatusToday, monthlyDayOffBalance } from '@/lib/derived'
@@ -39,6 +40,8 @@ export function EmployeeDetail() {
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [addDayOff, setAddDayOff] = useState(false)
   const [addSick, setAddSick] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   const status = useMemo(
     () => (employee ? employeeStatusToday(employee, daysOff, sickLeaves) : null),
@@ -69,16 +72,35 @@ export function EmployeeDetail() {
     )
   }
 
-  function update(data: Omit<Employee, 'id' | 'created_at' | 'updated_at'>) {
-    mutate.updateEmployee(employee!.id, data)
-    setEditOpen(false)
-    toast.success('Fiche mise à jour')
+  async function update(
+    data: Omit<Employee, 'id' | 'created_at' | 'updated_at'>,
+    avatarFile: File | null,
+  ) {
+    setSubmitting(true)
+    try {
+      let avatar_url = data.avatar_url
+      if (avatarFile) avatar_url = await uploadAvatar(avatarFile)
+      await mutate.updateEmployee(employee!.id, { ...data, avatar_url })
+      setEditOpen(false)
+      toast.success('Fiche mise à jour')
+    } catch (e) {
+      toast.error('Mise à jour impossible', e instanceof Error ? e.message : String(e))
+    } finally {
+      setSubmitting(false)
+    }
   }
 
-  function remove() {
-    mutate.deleteEmployee(employee!.id)
-    toast.info('Salarié·e supprimé·e', employee!.full_name)
-    navigate('/equipe')
+  async function remove() {
+    setDeleting(true)
+    try {
+      await mutate.deleteEmployee(employee!.id)
+      toast.info('Salarié·e supprimé·e', employee!.full_name)
+      navigate('/equipe')
+    } catch (e) {
+      toast.error('Suppression impossible', e instanceof Error ? e.message : String(e))
+    } finally {
+      setDeleting(false)
+    }
   }
 
   return (
@@ -288,6 +310,7 @@ export function EmployeeDetail() {
           onSubmit={update}
           onCancel={() => setEditOpen(false)}
           submitLabel="Enregistrer"
+          submitting={submitting}
         />
       </Dialog>
 
@@ -298,8 +321,8 @@ export function EmployeeDetail() {
         description="Cette action retire définitivement la fiche ainsi que tous les congés et arrêts associés."
         footer={
           <>
-            <Button variant="ghost" onClick={() => setDeleteOpen(false)}>Annuler</Button>
-            <Button variant="danger" onClick={remove}>Supprimer définitivement</Button>
+            <Button variant="ghost" onClick={() => setDeleteOpen(false)} disabled={deleting}>Annuler</Button>
+            <Button variant="danger" onClick={() => void remove()} loading={deleting}>Supprimer définitivement</Button>
           </>
         }
       >

@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/Field'
 import { useTheme } from '@/contexts/ThemeContext'
 
 export function Login() {
-  const { user, signIn, isMock } = useAuth()
+  const { user, signIn } = useAuth()
   const { theme, toggle } = useTheme()
   const navigate = useNavigate()
   const location = useLocation()
@@ -16,8 +16,8 @@ export function Login() {
 
   const from = (location.state as { from?: { pathname?: string } } | null)?.from?.pathname ?? '/'
 
-  const [email, setEmail] = useState(isMock ? 'admin@tontonfrancky.com' : '')
-  const [password, setPassword] = useState(isMock ? 'demo1234' : '')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [showPw, setShowPw] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -171,15 +171,6 @@ export function Login() {
               </div>
             </form>
 
-            {isMock && (
-              <div className="mt-8 p-3.5 rounded-md border border-line bg-surface">
-                <div className="label-caps mb-1.5">Mode démonstration</div>
-                <p className="text-[12.5px] text-ink-soft leading-snug">
-                  Aucune configuration Supabase détectée. Utilisez n'importe quel e-mail et un mot
-                  de passe d'au moins 4 caractères pour explorer.
-                </p>
-              </div>
-            )}
           </div>
         </div>
       </div>

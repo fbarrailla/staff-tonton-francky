@@ -40,9 +40,13 @@ export function SickLeavesPage() {
     [sickLeaves],
   )
 
-  function remove(s: SickLeave) {
-    mutate.deleteSickLeave(s.id)
-    toast.info('Arrêt supprimé')
+  async function remove(s: SickLeave) {
+    try {
+      await mutate.deleteSickLeave(s.id)
+      toast.info('Arrêt supprimé')
+    } catch (e) {
+      toast.error('Suppression impossible', e instanceof Error ? e.message : String(e))
+    }
   }
 
   return (
@@ -106,7 +110,7 @@ export function SickLeavesPage() {
                   <Button size="sm" variant="ghost" iconLeft={<Edit3 size={13} />} onClick={() => setEditing(s)}>
                     Modifier
                   </Button>
-                  <Button size="sm" variant="ghost" iconLeft={<Trash2 size={13} />} onClick={() => remove(s)} />
+                  <Button size="sm" variant="ghost" iconLeft={<Trash2 size={13} />} onClick={() => void remove(s)} />
                 </div>
               </div>
             )
