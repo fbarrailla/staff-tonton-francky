@@ -169,6 +169,25 @@ export const mutate = {
     emit()
   },
 
+  async upsertEmployees(inputs: Omit<Employee, 'id' | 'created_at' | 'updated_at'>[]) {
+    const client = requireClient()
+    if (inputs.length === 0) return [] as Employee[]
+    const { data, error } = await client
+      .from('employees')
+      .upsert(inputs, { onConflict: 'email' })
+      .select()
+    if (error) throw new Error(error.message)
+    const rows = (data ?? []) as Employee[]
+    // Merge back: replace any existing row with the same id, prepend new ones
+    const map = new Map(db.employees.map((e) => [e.id, e]))
+    for (const r of rows) map.set(r.id, r)
+    db.employees = Array.from(map.values()).sort((a, b) =>
+      a.full_name.localeCompare(b.full_name),
+    )
+    emit()
+    return rows
+  },
+
   async addDayOff(input: Omit<DayOff, 'id' | 'created_at' | 'updated_at'>) {
     const client = requireClient()
     const { data, error } = await client

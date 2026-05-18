@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Plus, Search, Users, X } from 'lucide-react'
+import { Plus, Search, Upload, Users, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Layout } from '@/components/Layout'
 import { Avatar } from '@/components/ui/Avatar'
@@ -16,6 +16,7 @@ import { uploadAvatar } from '@/lib/storage'
 import { COMMON_SKILLS, type EmployeeRole, type Employee } from '@/types'
 import { employeeStatusToday } from '@/lib/derived'
 import { EmployeeForm } from '@/components/EmployeeForm'
+import { ImportEmployeesDialog } from '@/components/ImportEmployeesDialog'
 import { useToast } from '@/contexts/ToastContext'
 import { cn, formatError } from '@/lib/utils'
 import { useRoleLabel } from '@/hooks/useLabels'
@@ -39,6 +40,7 @@ export function Employees() {
   const [skills, setSkills] = useState<string[]>([])
   const [status, setStatus] = useState<StatusFilter>('all')
   const [openAdd, setOpenAdd] = useState(false)
+  const [openImport, setOpenImport] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 
   const enriched = useMemo(
@@ -95,9 +97,14 @@ export function Employees() {
     <Layout eyebrow={t('employees.eyebrow')} title={t('employees.title')}>
       <header className="flex items-end justify-between gap-4 flex-wrap mb-5">
         <p className="text-[14px] text-ink-soft max-w-[60ch]">{t('employees.intro')}</p>
-        <Button variant="primary" iconLeft={<Plus size={14} />} onClick={() => setOpenAdd(true)}>
-          {t('employees.add_btn')}
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="secondary" iconLeft={<Upload size={14} />} onClick={() => setOpenImport(true)}>
+            {t('import.open_btn')}
+          </Button>
+          <Button variant="primary" iconLeft={<Plus size={14} />} onClick={() => setOpenAdd(true)}>
+            {t('employees.add_btn')}
+          </Button>
+        </div>
       </header>
 
       <div className="flex flex-wrap items-center gap-3 mb-5">
@@ -197,6 +204,8 @@ export function Employees() {
         <EmployeeForm onSubmit={handleAdd} onCancel={() => setOpenAdd(false)}
           submitLabel={t('employees.add_btn_short')} submitting={submitting} />
       </Dialog>
+
+      <ImportEmployeesDialog open={openImport} onClose={() => setOpenImport(false)} />
     </Layout>
   )
 }
