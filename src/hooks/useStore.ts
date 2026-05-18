@@ -36,6 +36,10 @@ export function useIntern(id: string | undefined) {
   return id ? interns.find((i) => i.id === id) ?? null : null
 }
 
+export function useTimeEntries() {
+  return useSyncExternalStore(subscribe, snapshot.timeEntries, snapshot.timeEntries)
+}
+
 export function useStoreStatus() {
   const loading = useSyncExternalStore(subscribe, snapshot.loading, snapshot.loading)
   const hydrated = useSyncExternalStore(subscribe, snapshot.hydrated, snapshot.hydrated)

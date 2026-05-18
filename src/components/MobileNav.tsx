@@ -7,6 +7,7 @@ import {
   CalendarDays,
   Plane,
   Stethoscope,
+  Clock,
   Settings,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -23,12 +24,13 @@ export function MobileNav() {
     { to: '/calendrier', label: t('nav.calendar_short'), icon: CalendarDays },
     { to: '/conges', label: t('nav.days_off_short'), icon: Plane },
     { to: '/arrets-maladie', label: t('nav.sick_leaves_short'), icon: Stethoscope },
+    { to: '/temps', label: t('nav.time_tracking_short'), icon: Clock },
     { to: '/reglages', label: t('nav.settings_short'), icon: Settings },
   ]
 
   return (
     <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-paper/95 backdrop-blur border-t border-line">
-      <ul className="grid grid-cols-8">
+      <ul className="grid grid-cols-9">
         {items.map(({ to, label, icon: Icon, end }) => (
           <li key={to}>
             <NavLink

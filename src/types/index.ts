@@ -103,6 +103,18 @@ export const INTERN_STATUS_LABEL: Record<InternStatus, string> = {
   ended: 'Terminé',
 }
 
+export interface TimeEntry {
+  id: UUID
+  user_id: UUID
+  work_date: string   // ISO date
+  hours: number
+  description: string
+  created_at: string
+  updated_at: string
+}
+
+export const DAILY_HOURS_TARGET = 4
+
 export interface DocumentRecord {
   id: UUID
   employee_id: UUID
