@@ -1,5 +1,5 @@
 import { FormEvent, useState } from 'react'
-import { Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { ArrowRight, Eye, EyeOff, Mail, Lock } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/contexts/AuthContext'
@@ -191,7 +191,7 @@ export function Login() {
               </Button>
 
               <div className="flex items-center justify-between text-[12px] text-ink-faint pt-1">
-                <a href="#" className="hover:text-ink">{t('auth.forgot_password')}</a>
+                <Link to="/mot-de-passe-oublie" className="hover:text-ink">{t('auth.forgot_password')}</Link>
                 <a href="#" className="hover:text-ink">{t('auth.help')}</a>
               </div>
             </form>

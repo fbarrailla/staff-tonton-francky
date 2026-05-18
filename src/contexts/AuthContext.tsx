@@ -9,6 +9,8 @@ interface AuthState {
   signIn: (email: string, password: string) => Promise<{ error?: string }>
   signOut: () => Promise<void>
   changePassword: (currentPassword: string, newPassword: string) => Promise<{ error?: string }>
+  requestPasswordReset: (email: string) => Promise<{ error?: string }>
+  setNewPassword: (newPassword: string) => Promise<{ error?: string }>
 }
 
 const Ctx = createContext<AuthState>({
@@ -17,6 +19,8 @@ const Ctx = createContext<AuthState>({
   signIn: async () => ({ error: 'not implemented' }),
   signOut: async () => {},
   changePassword: async () => ({ error: 'not implemented' }),
+  requestPasswordReset: async () => ({ error: 'not implemented' }),
+  setNewPassword: async () => ({ error: 'not implemented' }),
 })
 
 function mapUser(session: { user: { id: string; email?: string; user_metadata?: Record<string, unknown> } }): AuthUser {
@@ -82,6 +86,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     clearStore()
   }
 
+  const requestPasswordReset: AuthState['requestPasswordReset'] = async (email) => {
+    if (!supabase) return { error: 'Supabase non configuré.' }
+    const origin =
+      typeof window !== 'undefined' ? window.location.origin : ''
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${origin}/mot-de-passe/reinitialiser`,
+    })
+    if (error) return { error: error.message }
+    return {}
+  }
+
+  const setNewPassword: AuthState['setNewPassword'] = async (newPassword) => {
+    if (!supabase) return { error: 'Supabase non configuré.' }
+    // Requires an active session (the recovery link landed and the client
+    // auto-exchanged the token for a session).
+    const { error } = await supabase.auth.updateUser({ password: newPassword })
+    if (error) return { error: error.message }
+    return {}
+  }
+
   const changePassword: AuthState['changePassword'] = async (currentPassword, newPassword) => {
     if (!supabase) return { error: 'Supabase non configuré.' }
     if (!user?.email) return { error: 'Aucune session active.' }
@@ -101,7 +125,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <Ctx.Provider value={{ user, loading, signIn, signOut, changePassword }}>
+    <Ctx.Provider value={{ user, loading, signIn, signOut, changePassword, requestPasswordReset, setNewPassword }}>
       {children}
     </Ctx.Provider>
   )

@@ -2,6 +2,8 @@ import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from './contexts/AuthContext'
 import { Login } from './pages/Login'
+import { ForgotPassword } from './pages/ForgotPassword'
+import { ResetPassword } from './pages/ResetPassword'
 import { Dashboard } from './pages/Dashboard'
 import { Employees } from './pages/Employees'
 import { EmployeeDetail } from './pages/EmployeeDetail'
@@ -65,6 +67,8 @@ export default function App() {
   return (
     <Routes>
       <Route path="/connexion" element={<Login />} />
+      <Route path="/mot-de-passe-oublie" element={<ForgotPassword />} />
+      <Route path="/mot-de-passe/reinitialiser" element={<ResetPassword />} />
       <Route
         path="/"
         element={
