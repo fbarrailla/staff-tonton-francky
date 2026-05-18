@@ -505,7 +505,7 @@
   },
   "roles": {
     "gerant": "Manager",
-    "agent_voyage": "Travel agent",
+    "agent_voyage": "Agent",
     "developpeur": "Developer",
     "ux_designer": "UX Designer",
     "support_client": "Customer support",

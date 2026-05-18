@@ -109,7 +109,7 @@ export interface CalendarEvent {
 
 export const ROLE_LABEL: Record<EmployeeRole, string> = {
   gerant: 'Gérant·e',
-  agent_voyage: 'Agent de voyage',
+  agent_voyage: 'Agent',
   developpeur: 'Développeur·se',
   ux_designer: 'UX Designer',
   support_client: 'Support client',
