@@ -24,7 +24,7 @@ import { uploadAvatar } from '@/lib/storage'
 import { useToast } from '@/contexts/ToastContext'
 import { COMMON_SKILLS, ROLE_LABEL, type Employee } from '@/types'
 import { employeeStatusToday, monthlyDayOffBalance } from '@/lib/derived'
-import { formatDate, inclusiveDayCount } from '@/lib/utils'
+import { formatDate, formatError, inclusiveDayCount } from '@/lib/utils'
 import { DayOffForm } from '@/components/DayOffForm'
 import { SickLeaveForm } from '@/components/SickLeaveForm'
 
@@ -84,7 +84,7 @@ export function EmployeeDetail() {
       setEditOpen(false)
       toast.success('Fiche mise à jour')
     } catch (e) {
-      toast.error('Mise à jour impossible', e instanceof Error ? e.message : String(e))
+      toast.error('Mise à jour impossible', formatError(e))
     } finally {
       setSubmitting(false)
     }
@@ -97,7 +97,7 @@ export function EmployeeDetail() {
       toast.info('Salarié·e supprimé·e', employee!.full_name)
       navigate('/equipe')
     } catch (e) {
-      toast.error('Suppression impossible', e instanceof Error ? e.message : String(e))
+      toast.error('Suppression impossible', formatError(e))
     } finally {
       setDeleting(false)
     }

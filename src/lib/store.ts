@@ -1,5 +1,6 @@
 import type { Applicant, DayOff, Employee, SickLeave } from '@/types'
 import { supabase } from './supabase'
+import { formatError } from './utils'
 
 // =============================================================================
 // Source of truth: Supabase. The store keeps an in-memory cache so the UI can
@@ -88,8 +89,7 @@ export async function hydrate() {
     db.loading = false
     emit()
   } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e)
-    db.error = msg
+    db.error = formatError(e)
     db.loading = false
     emit()
     throw e

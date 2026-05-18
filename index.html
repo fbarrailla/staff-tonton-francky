@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr">
+<html lang="fr" translate="no">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -7,6 +7,10 @@
     <meta name="color-scheme" content="light dark" />
     <meta name="theme-color" content="#FAF6EF" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#1A1510" media="(prefers-color-scheme: dark)" />
+    <!-- Block browser auto-translate: mutating the DOM behind React's back
+         crashes reconciliation with NotFoundError on insertBefore.
+         A real i18n switcher inside the app supersedes this. -->
+    <meta name="google" content="notranslate" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

@@ -28,7 +28,7 @@ import {
 } from '@/types'
 import { ApplicantForm } from '@/components/ApplicantForm'
 import { useToast } from '@/contexts/ToastContext'
-import { formatDate } from '@/lib/utils'
+import { formatDate, formatError } from '@/lib/utils'
 
 type StatusFilter = 'all' | ApplicantStatus
 
@@ -99,7 +99,7 @@ export function Applicants() {
       setOpenAdd(false)
       toast.success('Candidature enregistrée', data.full_name)
     } catch (e) {
-      toast.error('Ajout impossible', e instanceof Error ? e.message : String(e))
+      toast.error('Ajout impossible', formatError(e))
     } finally {
       setSubmitting(false)
     }

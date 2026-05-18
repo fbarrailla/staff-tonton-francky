@@ -73,6 +73,32 @@ export function nowISO() {
   return new Date().toISOString()
 }
 
+/**
+ * Robust error → string. Handles:
+ *  - Error instances (.message)
+ *  - Supabase PostgrestError-shaped objects (plain object with .message)
+ *  - Strings
+ *  - Anything else (JSON-serialise, fall back to a literal)
+ */
+export function formatError(e: unknown): string {
+  if (!e) return 'Erreur inconnue'
+  if (typeof e === 'string') return e
+  if (e instanceof Error) return e.message
+  if (typeof e === 'object') {
+    const obj = e as { message?: unknown; error_description?: unknown; details?: unknown }
+    if (typeof obj.message === 'string' && obj.message) return obj.message
+    if (typeof obj.error_description === 'string' && obj.error_description) return obj.error_description
+    if (typeof obj.details === 'string' && obj.details) return obj.details
+    try {
+      const s = JSON.stringify(e)
+      if (s && s !== '{}') return s
+    } catch {
+      /* fallthrough */
+    }
+  }
+  return String(e)
+}
+
 export function todayISO() {
   return format(new Date(), 'yyyy-MM-dd')
 }

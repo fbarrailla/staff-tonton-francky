@@ -21,7 +21,7 @@ import {
   monthLabel,
   monthlyDayOffBalance,
 } from '@/lib/derived'
-import { cn, formatDate, formatLongDate, todayISO } from '@/lib/utils'
+import { cn, formatDate, formatError, formatLongDate, todayISO } from '@/lib/utils'
 import { useToast } from '@/contexts/ToastContext'
 import { ROLE_LABEL } from '@/types'
 import { differenceInCalendarDays, parseISO } from 'date-fns'
@@ -102,7 +102,7 @@ export function Dashboard() {
       await mutate.updateDayOff(id, { status: 'approved' })
       toast.success('Demande approuvée', 'Le congé a été validé.')
     } catch (e) {
-      toast.error('Action impossible', e instanceof Error ? e.message : String(e))
+      toast.error('Action impossible', formatError(e))
     }
   }
   async function reject(id: string) {
@@ -113,7 +113,7 @@ export function Dashboard() {
       })
       toast.info('Demande refusée', 'Une note a été ajoutée à la demande.')
     } catch (e) {
-      toast.error('Action impossible', e instanceof Error ? e.message : String(e))
+      toast.error('Action impossible', formatError(e))
     }
   }
 

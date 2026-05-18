@@ -4,7 +4,7 @@ import type { DayOff, Employee } from '@/types'
 import { Input, Textarea, Select } from './ui/Field'
 import { Button } from './ui/Button'
 import { mutate } from '@/lib/store'
-import { inclusiveDayCount, todayISO } from '@/lib/utils'
+import { formatError, inclusiveDayCount, todayISO } from '@/lib/utils'
 import { monthlyDayOffBalance } from '@/lib/derived'
 import { useToast } from '@/contexts/ToastContext'
 import { addDays, format } from 'date-fns'
@@ -70,7 +70,7 @@ export function DayOffForm({ employee, employees, existingDaysOff, initial, onSa
       }
       onSaved()
     } catch (e) {
-      toast.error('Enregistrement impossible', e instanceof Error ? e.message : String(e))
+      toast.error('Enregistrement impossible', formatError(e))
     } finally {
       setSubmitting(false)
     }

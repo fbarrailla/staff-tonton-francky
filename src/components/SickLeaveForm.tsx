@@ -5,7 +5,7 @@ import { Input, Textarea, Select } from './ui/Field'
 import { Button } from './ui/Button'
 import { mutate } from '@/lib/store'
 import { uploadCertificate } from '@/lib/storage'
-import { inclusiveDayCount, todayISO } from '@/lib/utils'
+import { formatError, inclusiveDayCount, todayISO } from '@/lib/utils'
 import { useToast } from '@/contexts/ToastContext'
 import { addDays, format } from 'date-fns'
 
@@ -87,7 +87,7 @@ export function SickLeaveForm({ employee, employees, initial, onSaved, onCancel 
       }
       onSaved()
     } catch (e) {
-      toast.error('Enregistrement impossible', e instanceof Error ? e.message : String(e))
+      toast.error('Enregistrement impossible', formatError(e))
     } finally {
       setSubmitting(false)
     }

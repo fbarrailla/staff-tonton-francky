@@ -20,7 +20,7 @@ import { useDaysOff, useEmployees } from '@/hooks/useStore'
 import { mutate } from '@/lib/store'
 import { useToast } from '@/contexts/ToastContext'
 import { DayOffForm } from '@/components/DayOffForm'
-import { cn, formatDate } from '@/lib/utils'
+import { cn, formatDate, formatError } from '@/lib/utils'
 import { monthlyDayOffBalance } from '@/lib/derived'
 import { ROLE_LABEL, type DayOff } from '@/types'
 import { parseISO } from 'date-fns'
@@ -54,7 +54,7 @@ export function DaysOffPage() {
       await mutate.updateDayOff(d.id, { status: 'approved' })
       toast.success('Congé approuvé')
     } catch (e) {
-      toast.error('Action impossible', e instanceof Error ? e.message : String(e))
+      toast.error('Action impossible', formatError(e))
     }
   }
 
@@ -73,7 +73,7 @@ export function DaysOffPage() {
       setRejecting(null)
       toast.info('Congé refusé')
     } catch (e) {
-      toast.error('Action impossible', e instanceof Error ? e.message : String(e))
+      toast.error('Action impossible', formatError(e))
     }
   }
 
@@ -82,7 +82,7 @@ export function DaysOffPage() {
       await mutate.deleteDayOff(d.id)
       toast.info('Demande supprimée')
     } catch (e) {
-      toast.error('Suppression impossible', e instanceof Error ? e.message : String(e))
+      toast.error('Suppression impossible', formatError(e))
     }
   }
 

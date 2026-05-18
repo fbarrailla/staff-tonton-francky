@@ -16,7 +16,7 @@ import { useEmployees, useSickLeaves } from '@/hooks/useStore'
 import { mutate } from '@/lib/store'
 import { useToast } from '@/contexts/ToastContext'
 import { SickLeaveForm } from '@/components/SickLeaveForm'
-import { formatDate } from '@/lib/utils'
+import { formatDate, formatError } from '@/lib/utils'
 import { ROLE_LABEL, type SickLeave } from '@/types'
 import { isAfter, parseISO } from 'date-fns'
 
@@ -45,7 +45,7 @@ export function SickLeavesPage() {
       await mutate.deleteSickLeave(s.id)
       toast.info('Arrêt supprimé')
     } catch (e) {
-      toast.error('Suppression impossible', e instanceof Error ? e.message : String(e))
+      toast.error('Suppression impossible', formatError(e))
     }
   }
 

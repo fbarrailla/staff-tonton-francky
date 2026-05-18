@@ -16,7 +16,7 @@ import { COMMON_SKILLS, ROLE_LABEL, type EmployeeRole, type Employee } from '@/t
 import { employeeStatusToday } from '@/lib/derived'
 import { EmployeeForm } from '@/components/EmployeeForm'
 import { useToast } from '@/contexts/ToastContext'
-import { cn, formatDate } from '@/lib/utils'
+import { cn, formatDate, formatError } from '@/lib/utils'
 
 type StatusFilter = 'all' | 'working' | 'off' | 'sick'
 
@@ -81,7 +81,7 @@ export function Employees() {
       setOpenAdd(false)
       toast.success('Salarié·e ajouté·e', data.full_name)
     } catch (e) {
-      toast.error('Ajout impossible', e instanceof Error ? e.message : String(e))
+      toast.error('Ajout impossible', formatError(e))
     } finally {
       setSubmitting(false)
     }

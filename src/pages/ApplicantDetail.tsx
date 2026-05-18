@@ -29,7 +29,7 @@ import {
   type Applicant,
   type ApplicantStatus,
 } from '@/types'
-import { cn, formatDate } from '@/lib/utils'
+import { cn, formatDate, formatError } from '@/lib/utils'
 
 const STATUS_TONE: Record<ApplicantStatus, 'neutral' | 'pending' | 'approved' | 'working' | 'rejected'> = {
   nouveau: 'neutral',
@@ -68,19 +68,21 @@ export function ApplicantDetail() {
     )
   }
 
-  async function openSigned(path: string, fallbackName: string) {
+  async function openSigned(path: string, _fallbackName: string) {
     try {
       const url = await signedUrl('applicants', path, 120)
-      const a = document.createElement('a')
-      a.href = url
-      a.target = '_blank'
-      a.rel = 'noreferrer'
-      a.download = fallbackName
-      document.body.appendChild(a)
-      a.click()
-      a.remove()
+      // Open in a new tab rather than mutating document.body with a synthetic
+      // <a> — manual DOM mutation under React's tree can race with portal
+      // reconciliation (insertBefore NotFoundError).
+      const win = window.open(url, '_blank', 'noopener,noreferrer')
+      if (!win) {
+        toast.info(
+          'Ouverture bloquée',
+          'Autorisez les pop-ups pour ouvrir le document — ou ouvrez ce lien manuellement.',
+        )
+      }
     } catch (e) {
-      toast.error('Téléchargement impossible', e instanceof Error ? e.message : String(e))
+      toast.error('Téléchargement impossible', formatError(e))
     }
   }
 
@@ -99,7 +101,7 @@ export function ApplicantDetail() {
       setEditOpen(false)
       toast.success('Fiche mise à jour')
     } catch (e) {
-      toast.error('Mise à jour impossible', e instanceof Error ? e.message : String(e))
+      toast.error('Mise à jour impossible', formatError(e))
     } finally {
       setSubmitting(false)
     }
@@ -112,7 +114,7 @@ export function ApplicantDetail() {
       toast.info('Candidature supprimée')
       navigate('/candidats')
     } catch (e) {
-      toast.error('Suppression impossible', e instanceof Error ? e.message : String(e))
+      toast.error('Suppression impossible', formatError(e))
     } finally {
       setDeleting(false)
     }
@@ -125,7 +127,7 @@ export function ApplicantDetail() {
       await mutate.updateApplicant(applicant!.id, { status: s })
       toast.success('Statut mis à jour', APPLICANT_STATUS_LABEL[s])
     } catch (e) {
-      toast.error('Action impossible', e instanceof Error ? e.message : String(e))
+      toast.error('Action impossible', formatError(e))
     } finally {
       setUpdatingStatus(false)
     }
