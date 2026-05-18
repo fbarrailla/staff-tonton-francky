@@ -3,7 +3,7 @@ import {
 } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  Search, X, Users, UserPlus, GraduationCap, LayoutDashboard,
+  Search, X, Users, UsersRound, UserPlus, GraduationCap, LayoutDashboard,
   CalendarDays, Plane, Stethoscope, Clock, Settings, CornerDownLeft,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -69,6 +69,7 @@ export function GlobalSearch() {
     () => [
       { to: '/', label: t('nav.dashboard'), icon: <LayoutDashboard size={14} /> },
       { to: '/equipe', label: t('nav.employees'), icon: <Users size={14} /> },
+      { to: '/trombinoscope', label: t('nav.trombinoscope'), icon: <UsersRound size={14} /> },
       { to: '/candidats', label: t('nav.applicants'), icon: <UserPlus size={14} /> },
       { to: '/stagiaires', label: t('nav.interns'), icon: <GraduationCap size={14} /> },
       { to: '/calendrier', label: t('nav.calendar'), icon: <CalendarDays size={14} /> },

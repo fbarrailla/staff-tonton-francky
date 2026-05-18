@@ -65,6 +65,8 @@
     "time_tracking_short": "Temps",
     "team_time": "Temps de l'équipe",
     "team_time_short": "Équipe",
+    "trombinoscope": "Trombinoscope",
+    "trombinoscope_short": "Tromb.",
     "calendar": "Calendrier",
     "calendar_short": "Cal.",
     "days_off": "Congés",
@@ -676,6 +678,19 @@
     "success_title": "Import terminé",
     "success_body": "{{count}} salarié·e·s importé·e·s ou mis à jour.",
     "failed_title": "Import impossible"
+  },
+  "trombinoscope": {
+    "eyebrow": "Équipe en image",
+    "title": "Trombinoscope",
+    "intro": "Toute l'équipe Tonton Francky d'un coup d'œil — cliquez sur un visage pour l'afficher en plein écran.",
+    "prev": "Précédent",
+    "next": "Suivant",
+    "close": "Fermer",
+    "view_profile": "Voir la fiche",
+    "no_photo": "Aucune photo — initiales colorées par défaut.",
+    "counter": "{{current}} / {{total}}",
+    "empty_title": "Aucun·e salarié·e à afficher",
+    "empty_desc": "Ajoutez des salarié·e·s à l'équipe pour qu'ils·elles apparaissent ici."
   },
   "team_time": {
     "eyebrow": "Suivi managérial",

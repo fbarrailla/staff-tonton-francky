@@ -2,6 +2,7 @@ import { NavLink } from 'react-router-dom'
 import {
   LayoutDashboard,
   Users,
+  UsersRound,
   UserPlus,
   GraduationCap,
   CalendarDays,
@@ -26,6 +27,7 @@ export function Sidebar() {
   const items: NavItem[] = [
     { to: '/', label: t('nav.dashboard'), icon: LayoutDashboard, end: true },
     { to: '/equipe', label: t('nav.employees'), icon: Users },
+    { to: '/trombinoscope', label: t('nav.trombinoscope'), icon: UsersRound },
     { to: '/candidats', label: t('nav.applicants'), icon: UserPlus },
     { to: '/stagiaires', label: t('nav.interns'), icon: GraduationCap },
     { to: '/calendrier', label: t('nav.calendar'), icon: CalendarDays },

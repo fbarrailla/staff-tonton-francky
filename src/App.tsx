@@ -16,6 +16,7 @@ import { ApplicantDetail } from './pages/ApplicantDetail'
 import { Interns } from './pages/Interns'
 import { TimeTrackingPage } from './pages/TimeTracking'
 import { TeamTimePage } from './pages/TeamTime'
+import { TrombinoscopePage } from './pages/Trombinoscope'
 import { Spinner } from './components/ui/Spinner'
 import { useStoreStatus } from './hooks/useStore'
 
@@ -91,6 +92,14 @@ export default function App() {
         element={
           <RequireAuth>
             <EmployeeDetail />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/trombinoscope"
+        element={
+          <RequireAuth>
+            <TrombinoscopePage />
           </RequireAuth>
         }
       />

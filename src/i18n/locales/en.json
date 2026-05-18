@@ -65,6 +65,8 @@
     "time_tracking_short": "Time",
     "team_time": "Team time",
     "team_time_short": "Team time",
+    "trombinoscope": "Face wall",
+    "trombinoscope_short": "Faces",
     "calendar": "Calendar",
     "calendar_short": "Cal.",
     "days_off": "Time off",
@@ -674,6 +676,19 @@
     "success_title": "Import complete",
     "success_body": "{{count}} team members imported or updated.",
     "failed_title": "Couldn't import"
+  },
+  "trombinoscope": {
+    "eyebrow": "Team in pictures",
+    "title": "Face wall",
+    "intro": "The entire Tonton Francky team at a glance — click a face to see it fullscreen.",
+    "prev": "Previous",
+    "next": "Next",
+    "close": "Close",
+    "view_profile": "View profile",
+    "no_photo": "No photo — coloured initials by default.",
+    "counter": "{{current}} / {{total}}",
+    "empty_title": "No team member to show",
+    "empty_desc": "Add team members so they appear here."
   },
   "team_time": {
     "eyebrow": "Manager view",
