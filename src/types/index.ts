@@ -79,6 +79,30 @@ export const APPLICANT_STATUS_LABEL: Record<ApplicantStatus, string> = {
   refuse: 'Refusé·e',
 }
 
+export type InternStatus = 'pending' | 'active' | 'hired' | 'ended'
+
+export interface Intern {
+  id: UUID
+  full_name: string
+  email: string
+  phone: string | null
+  age: number | null
+  applied_at: string | null    // ISO date
+  interview_at: string | null  // free-form
+  status: InternStatus
+  skills: string[]
+  admin_note: string | null
+  created_at: string
+  updated_at: string
+}
+
+export const INTERN_STATUS_LABEL: Record<InternStatus, string> = {
+  pending: 'En attente',
+  active: 'En stage',
+  hired: 'Embauché·e',
+  ended: 'Terminé',
+}
+
 export interface DocumentRecord {
   id: UUID
   employee_id: UUID

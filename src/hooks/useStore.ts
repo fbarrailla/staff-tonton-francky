@@ -27,6 +27,15 @@ export function useApplicant(id: string | undefined) {
   return id ? applicants.find((a) => a.id === id) ?? null : null
 }
 
+export function useInterns() {
+  return useSyncExternalStore(subscribe, snapshot.interns, snapshot.interns)
+}
+
+export function useIntern(id: string | undefined) {
+  const interns = useInterns()
+  return id ? interns.find((i) => i.id === id) ?? null : null
+}
+
 export function useStoreStatus() {
   const loading = useSyncExternalStore(subscribe, snapshot.loading, snapshot.loading)
   const hydrated = useSyncExternalStore(subscribe, snapshot.hydrated, snapshot.hydrated)

@@ -11,6 +11,7 @@ import { SickLeavesPage } from './pages/SickLeavesPage'
 import { SettingsPage } from './pages/SettingsPage'
 import { Applicants } from './pages/Applicants'
 import { ApplicantDetail } from './pages/ApplicantDetail'
+import { Interns } from './pages/Interns'
 import { Spinner } from './components/ui/Spinner'
 import { useStoreStatus } from './hooks/useStore'
 
@@ -100,6 +101,14 @@ export default function App() {
         element={
           <RequireAuth>
             <ApplicantDetail />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/stagiaires"
+        element={
+          <RequireAuth>
+            <Interns />
           </RequireAuth>
         }
       />

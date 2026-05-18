@@ -3,6 +3,7 @@ import {
   LayoutDashboard,
   Users,
   UserPlus,
+  GraduationCap,
   CalendarDays,
   Plane,
   Stethoscope,
@@ -18,6 +19,7 @@ export function MobileNav() {
     { to: '/', label: t('nav.dashboard_short'), icon: LayoutDashboard, end: true },
     { to: '/equipe', label: t('nav.employees_short'), icon: Users },
     { to: '/candidats', label: t('nav.applicants_short'), icon: UserPlus },
+    { to: '/stagiaires', label: t('nav.interns_short'), icon: GraduationCap },
     { to: '/calendrier', label: t('nav.calendar_short'), icon: CalendarDays },
     { to: '/conges', label: t('nav.days_off_short'), icon: Plane },
     { to: '/arrets-maladie', label: t('nav.sick_leaves_short'), icon: Stethoscope },
@@ -26,7 +28,7 @@ export function MobileNav() {
 
   return (
     <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-paper/95 backdrop-blur border-t border-line">
-      <ul className="grid grid-cols-7">
+      <ul className="grid grid-cols-8">
         {items.map(({ to, label, icon: Icon, end }) => (
           <li key={to}>
             <NavLink
@@ -34,13 +36,13 @@ export function MobileNav() {
               end={end}
               className={({ isActive }) =>
                 cn(
-                  'flex flex-col items-center gap-0.5 py-2 text-[10px] font-medium',
+                  'flex flex-col items-center gap-0.5 py-2 text-[9.5px] font-medium',
                   isActive ? 'text-tonton-500' : 'text-ink-faint',
                 )
               }
             >
-              <Icon size={17} strokeWidth={1.75} />
-              {label}
+              <Icon size={16} strokeWidth={1.75} />
+              <span className="truncate max-w-full px-0.5">{label}</span>
             </NavLink>
           </li>
         ))}

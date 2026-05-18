@@ -1,4 +1,4 @@
-import type { Applicant, DayOff, Employee, SickLeave } from '@/types'
+import type { Applicant, DayOff, Employee, Intern, SickLeave } from '@/types'
 import { supabase } from './supabase'
 import { formatError } from './utils'
 
@@ -13,6 +13,7 @@ type DBShape = {
   daysOff: DayOff[]
   sickLeaves: SickLeave[]
   applicants: Applicant[]
+  interns: Intern[]
   hydrated: boolean
   loading: boolean
   error: string | null
@@ -23,6 +24,7 @@ const db: DBShape = {
   daysOff: [],
   sickLeaves: [],
   applicants: [],
+  interns: [],
   hydrated: false,
   loading: false,
   error: null,
@@ -47,11 +49,13 @@ export const snapshot = {
   daysOff: () => db.daysOff,
   sickLeaves: () => db.sickLeaves,
   applicants: () => db.applicants,
+  interns: () => db.interns,
   hydrated: () => db.hydrated,
   loading: () => db.loading,
   error: () => db.error,
   employee: (id: string) => db.employees.find((e) => e.id === id) ?? null,
   applicant: (id: string) => db.applicants.find((a) => a.id === id) ?? null,
+  intern: (id: string) => db.interns.find((i) => i.id === id) ?? null,
 }
 
 // Hydration -------------------------------------------------------------------
@@ -70,21 +74,27 @@ export async function hydrate() {
   db.error = null
   emit()
   try {
-    const [empRes, doRes, sickRes, appRes] = await Promise.all([
+    const [empRes, doRes, sickRes, appRes, intRes] = await Promise.all([
       client.from('employees').select('*').order('full_name', { ascending: true }),
       client.from('employee_days_off').select('*').order('start_date', { ascending: false }),
       client.from('employee_sick_leaves').select('*').order('start_date', { ascending: false }),
       client.from('applicants').select('*').order('applied_at', { ascending: false }),
+      client.from('interns').select('*').order('applied_at', { ascending: false }),
     ])
     if (empRes.error) throw empRes.error
     if (doRes.error) throw doRes.error
     if (sickRes.error) throw sickRes.error
     if (appRes.error) throw appRes.error
+    // interns table is optional — don't crash if it isn't present yet
+    if (intRes.error && intRes.error.code !== 'PGRST205' && intRes.error.code !== '42P01') {
+      throw intRes.error
+    }
 
     db.employees = (empRes.data ?? []) as Employee[]
     db.daysOff = (doRes.data ?? []) as DayOff[]
     db.sickLeaves = (sickRes.data ?? []) as SickLeave[]
     db.applicants = (appRes.data ?? []) as Applicant[]
+    db.interns = (intRes.data ?? []) as Intern[]
     db.hydrated = true
     db.loading = false
     emit()
@@ -101,6 +111,7 @@ export function clearStore() {
   db.daysOff = []
   db.sickLeaves = []
   db.applicants = []
+  db.interns = []
   db.hydrated = false
   db.loading = false
   db.error = null
@@ -254,6 +265,41 @@ export const mutate = {
     const { error } = await client.from('applicants').delete().eq('id', id)
     if (error) throw new Error(error.message)
     db.applicants = db.applicants.filter((a) => a.id !== id)
+    emit()
+  },
+
+  async addIntern(input: Omit<Intern, 'id' | 'created_at' | 'updated_at'>) {
+    const client = requireClient()
+    const { data, error } = await client
+      .from('interns')
+      .insert(input)
+      .select()
+      .single()
+    if (error) throw new Error(error.message)
+    db.interns = [data as Intern, ...db.interns]
+    emit()
+    return data as Intern
+  },
+
+  async updateIntern(id: string, patch: Partial<Intern>) {
+    const client = requireClient()
+    const { data, error } = await client
+      .from('interns')
+      .update(patch)
+      .eq('id', id)
+      .select()
+      .single()
+    if (error) throw new Error(error.message)
+    db.interns = db.interns.map((i) => (i.id === id ? (data as Intern) : i))
+    emit()
+    return data as Intern
+  },
+
+  async deleteIntern(id: string) {
+    const client = requireClient()
+    const { error } = await client.from('interns').delete().eq('id', id)
+    if (error) throw new Error(error.message)
+    db.interns = db.interns.filter((i) => i.id !== id)
     emit()
   },
 }
