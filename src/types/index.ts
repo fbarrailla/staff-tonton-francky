@@ -106,7 +106,8 @@ export const INTERN_STATUS_LABEL: Record<InternStatus, string> = {
 export interface TimeEntry {
   id: UUID
   user_id: UUID
-  work_date: string   // ISO date
+  author_email: string | null  // denormalised from auth.users for joinability
+  work_date: string            // ISO date
   hours: number
   description: string
   created_at: string

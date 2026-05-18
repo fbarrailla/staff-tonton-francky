@@ -63,6 +63,8 @@
     "interns_short": "Int.",
     "time_tracking": "Time tracking",
     "time_tracking_short": "Time",
+    "team_time": "Team time",
+    "team_time_short": "Team time",
     "calendar": "Calendar",
     "calendar_short": "Cal.",
     "days_off": "Time off",
@@ -78,7 +80,7 @@
     "backoffice": "Backoffice"
   },
   "topbar": {
-    "search_placeholder": "Search a team member, a leave…",
+    "search_placeholder": "Search — team, candidates, interns…",
     "connected": "Signed in",
     "light_mode": "Light mode",
     "dark_mode": "Dark mode",
@@ -86,6 +88,16 @@
     "to_dark": "Switch to dark mode",
     "settings": "Settings",
     "logout": "Sign out"
+  },
+  "search": {
+    "group_employees": "Team",
+    "group_applicants": "Candidates",
+    "group_interns": "Interns",
+    "group_pages": "Pages",
+    "no_results": "No results for “{{q}}”",
+    "no_results_hint": "Try a name, email, skill or position.",
+    "hint_enter": "Enter",
+    "hint_navigate": "↑↓ to navigate · Esc to close"
   },
   "auth": {
     "edition": "2026 edition",
@@ -637,6 +649,31 @@
     "missing_other": "{{count}}h missing",
     "weekend_skipped": "Weekend — no target",
     "your_entries": "Your entries"
+  },
+  "team_time": {
+    "eyebrow": "Manager view",
+    "title": "Team time",
+    "intro": "Bird's-eye view of the team's logged time — the current week, day by day. Click a row to see a team member's tasks.",
+    "prev_week": "Previous week",
+    "next_week": "Next week",
+    "this_week": "This week",
+    "all_team": "Whole team",
+    "on_track": "On track",
+    "behind": "Behind",
+    "ahead": "Ahead",
+    "no_entry": "None",
+    "no_target": "—",
+    "week_total": "Week total",
+    "team_week_total": "Team total",
+    "team_target": "Team target",
+    "completion": "Progress",
+    "people_on_track": "{{count}} on track",
+    "people_behind": "{{count}} behind",
+    "no_entries_week": "No entries for this week.",
+    "detail_title": "{{name}} — Week of {{date}}",
+    "detail_intro": "Tasks {{name}} logged this week.",
+    "empty_employee_week": "No entries for {{name}} this week.",
+    "no_employees": "No team members yet."
   },
   "intern_form": {
     "full_name": "Full name",

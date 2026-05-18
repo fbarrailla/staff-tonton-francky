@@ -1,10 +1,11 @@
 import { useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { Search, Sun, Moon, LogOut, ChevronDown, Globe } from 'lucide-react'
+import { Sun, Moon, LogOut, ChevronDown, Globe } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useAuth } from '@/contexts/AuthContext'
 import { Avatar } from './ui/Avatar'
+import { GlobalSearch } from './GlobalSearch'
 import { cn } from '@/lib/utils'
 import { useFormatLongDate, useLang } from '@/hooks/useLocale'
 import { todayISO } from '@/lib/utils'
@@ -46,20 +47,7 @@ export function Topbar({ title, eyebrow }: Props) {
           </div>
         </div>
 
-        <div className="hidden md:flex relative w-72 max-w-full">
-          <Search
-            size={14}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint"
-          />
-          <input
-            type="search"
-            placeholder={t('topbar.search_placeholder')}
-            className="w-full h-9 pl-9 pr-12 text-[13px] rounded-md bg-surface border border-line focus:border-tonton-500 outline-none placeholder:text-ink-faint"
-          />
-          <kbd className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-mono text-ink-faint bg-paper border border-line rounded px-1.5 py-0.5">
-            ⌘K
-          </kbd>
-        </div>
+        <GlobalSearch />
 
         {/* Language switcher */}
         <div className="inline-flex items-center bg-surface border border-line rounded-md p-0.5 h-9">

@@ -63,6 +63,8 @@
     "interns_short": "Stag.",
     "time_tracking": "Suivi du temps",
     "time_tracking_short": "Temps",
+    "team_time": "Temps de l'équipe",
+    "team_time_short": "Équipe",
     "calendar": "Calendrier",
     "calendar_short": "Cal.",
     "days_off": "Congés",
@@ -78,7 +80,7 @@
     "backoffice": "Backoffice"
   },
   "topbar": {
-    "search_placeholder": "Rechercher un·e salarié·e, un congé…",
+    "search_placeholder": "Rechercher — équipe, candidats, stagiaires…",
     "connected": "Connecté·e",
     "light_mode": "Mode clair",
     "dark_mode": "Mode sombre",
@@ -86,6 +88,16 @@
     "to_dark": "Passer en mode sombre",
     "settings": "Réglages",
     "logout": "Se déconnecter"
+  },
+  "search": {
+    "group_employees": "Équipe",
+    "group_applicants": "Candidats",
+    "group_interns": "Stagiaires",
+    "group_pages": "Pages",
+    "no_results": "Aucun résultat pour « {{q}} »",
+    "no_results_hint": "Essayez avec un nom, e-mail, compétence ou poste.",
+    "hint_enter": "Entrée",
+    "hint_navigate": "↑↓ pour naviguer · Échap pour fermer"
   },
   "auth": {
     "edition": "Édition 2026",
@@ -639,6 +651,31 @@
     "missing_other": "Il manque {{count}}h",
     "weekend_skipped": "Week-end — pas d'objectif",
     "your_entries": "Vos entrées"
+  },
+  "team_time": {
+    "eyebrow": "Suivi managérial",
+    "title": "Temps de l'équipe",
+    "intro": "Vue d'ensemble du temps déclaré par l'équipe — semaine en cours, jour par jour. Cliquez sur une ligne pour voir le détail des tâches d'un·e salarié·e.",
+    "prev_week": "Semaine précédente",
+    "next_week": "Semaine suivante",
+    "this_week": "Cette semaine",
+    "all_team": "Toute l'équipe",
+    "on_track": "À jour",
+    "behind": "En retard",
+    "ahead": "En avance",
+    "no_entry": "Aucune",
+    "no_target": "—",
+    "week_total": "Total semaine",
+    "team_week_total": "Total équipe",
+    "team_target": "Objectif équipe",
+    "completion": "Avancement",
+    "people_on_track": "{{count}} à jour",
+    "people_behind": "{{count}} en retard",
+    "no_entries_week": "Aucune entrée pour cette semaine.",
+    "detail_title": "{{name}} — Semaine du {{date}}",
+    "detail_intro": "Tâches déclarées par {{name}} cette semaine.",
+    "empty_employee_week": "Aucune entrée pour {{name}} cette semaine.",
+    "no_employees": "Aucun salarié·e dans l'équipe."
   },
   "intern_form": {
     "full_name": "Nom complet",

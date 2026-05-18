@@ -8,6 +8,7 @@ import {
   Plane,
   Stethoscope,
   Clock,
+  BarChart3,
   Settings,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -31,6 +32,7 @@ export function Sidebar() {
     { to: '/conges', label: t('nav.days_off'), icon: Plane },
     { to: '/arrets-maladie', label: t('nav.sick_leaves'), icon: Stethoscope },
     { to: '/temps', label: t('nav.time_tracking'), icon: Clock },
+    { to: '/temps/equipe', label: t('nav.team_time'), icon: BarChart3 },
     { to: '/reglages', label: t('nav.settings'), icon: Settings },
   ]
 

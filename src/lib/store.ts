@@ -310,7 +310,8 @@ export const mutate = {
   },
 
   async addTimeEntry(
-    input: Omit<TimeEntry, 'id' | 'user_id' | 'created_at' | 'updated_at'> & { user_id?: string },
+    input: Omit<TimeEntry, 'id' | 'user_id' | 'author_email' | 'created_at' | 'updated_at'>
+      & { user_id?: string; author_email?: string | null },
   ) {
     const client = requireClient()
     const { data, error } = await client
