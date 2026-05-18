@@ -1,5 +1,7 @@
-import { useState } from 'react'
-import { Sun, Moon, LogOut, Database, Languages, Building2, Sparkles } from 'lucide-react'
+import { FormEvent, useState } from 'react'
+import {
+  Sun, Moon, LogOut, Database, Languages, Building2, Sparkles, Lock, Eye, EyeOff, KeyRound,
+} from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Layout } from '@/components/Layout'
 import { Button } from '@/components/ui/Button'
@@ -126,6 +128,10 @@ export function SettingsPage() {
                 {t('settings.logout')}
               </Button>
             </div>
+
+            <div className="mt-6 pt-6 border-t border-line">
+              <ChangePasswordForm />
+            </div>
           </section>
 
           <section id="donnees" className="surface-card p-6">
@@ -174,6 +180,121 @@ function ThemeChoice({
       </span>
       {active && <span className="ml-auto text-[11px] text-tonton-500 font-medium tracking-tightish">{activeLabel}</span>}
     </button>
+  )
+}
+
+function ChangePasswordForm() {
+  const { t } = useTranslation()
+  const { changePassword } = useAuth()
+  const toast = useToast()
+
+  const [current, setCurrent] = useState('')
+  const [next, setNext] = useState('')
+  const [confirm, setConfirm] = useState('')
+  const [showCurrent, setShowCurrent] = useState(false)
+  const [showNext, setShowNext] = useState(false)
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [submitting, setSubmitting] = useState(false)
+
+  async function submit(e: FormEvent) {
+    e.preventDefault()
+    const errs: Record<string, string> = {}
+    if (!current) errs.current = t('settings.password_err_current')
+    if (next.length < 8) errs.next = t('settings.password_err_too_short')
+    if (next && confirm && next !== confirm) errs.confirm = t('settings.password_err_mismatch')
+    if (current && next && current === next) errs.next = t('settings.password_err_same')
+    setErrors(errs)
+    if (Object.keys(errs).length > 0) return
+
+    setSubmitting(true)
+    const { error } = await changePassword(current, next)
+    setSubmitting(false)
+    if (error === 'current_invalid') {
+      setErrors({ current: t('settings.password_err_current') })
+      return
+    }
+    if (error) {
+      toast.error(t('settings.password_title'), error)
+      return
+    }
+    setCurrent('')
+    setNext('')
+    setConfirm('')
+    setErrors({})
+    toast.success(t('settings.password_saved_title'), t('settings.password_saved_body'))
+  }
+
+  return (
+    <form onSubmit={submit} className="space-y-4">
+      <div className="flex items-center gap-2">
+        <KeyRound size={14} className="text-tonton-500" />
+        <h3 className="display text-[17px] text-ink">{t('settings.password_title')}</h3>
+      </div>
+      <p className="text-[12.5px] text-ink-soft -mt-2 max-w-prose">
+        {t('settings.password_intro')}
+      </p>
+
+      <Input
+        label={t('settings.password_current')}
+        type={showCurrent ? 'text' : 'password'}
+        value={current}
+        onChange={(e) => setCurrent(e.target.value)}
+        placeholder="••••••••"
+        iconLeft={<Lock size={14} />}
+        iconRight={
+          <button
+            type="button"
+            onClick={() => setShowCurrent((v) => !v)}
+            className="text-ink-faint hover:text-ink"
+            aria-label={showCurrent ? t('settings.password_hide') : t('settings.password_show')}
+          >
+            {showCurrent ? <EyeOff size={14} /> : <Eye size={14} />}
+          </button>
+        }
+        autoComplete="current-password"
+        error={errors.current}
+      />
+
+      <div className="grid sm:grid-cols-2 gap-3">
+        <Input
+          label={t('settings.password_new')}
+          type={showNext ? 'text' : 'password'}
+          value={next}
+          onChange={(e) => setNext(e.target.value)}
+          placeholder="••••••••"
+          iconLeft={<Lock size={14} />}
+          iconRight={
+            <button
+              type="button"
+              onClick={() => setShowNext((v) => !v)}
+              className="text-ink-faint hover:text-ink"
+              aria-label={showNext ? t('settings.password_hide') : t('settings.password_show')}
+            >
+              {showNext ? <EyeOff size={14} /> : <Eye size={14} />}
+            </button>
+          }
+          autoComplete="new-password"
+          error={errors.next}
+          hint={!errors.next ? t('settings.password_hint') : undefined}
+        />
+        <Input
+          label={t('settings.password_confirm')}
+          type={showNext ? 'text' : 'password'}
+          value={confirm}
+          onChange={(e) => setConfirm(e.target.value)}
+          placeholder="••••••••"
+          iconLeft={<Lock size={14} />}
+          autoComplete="new-password"
+          error={errors.confirm}
+        />
+      </div>
+
+      <div className="flex justify-end">
+        <Button type="submit" variant="primary" loading={submitting}>
+          {t('settings.password_save')}
+        </Button>
+      </div>
+    </form>
   )
 }
 

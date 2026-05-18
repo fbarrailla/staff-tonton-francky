@@ -8,6 +8,7 @@ interface AuthState {
   loading: boolean
   signIn: (email: string, password: string) => Promise<{ error?: string }>
   signOut: () => Promise<void>
+  changePassword: (currentPassword: string, newPassword: string) => Promise<{ error?: string }>
 }
 
 const Ctx = createContext<AuthState>({
@@ -15,6 +16,7 @@ const Ctx = createContext<AuthState>({
   loading: true,
   signIn: async () => ({ error: 'not implemented' }),
   signOut: async () => {},
+  changePassword: async () => ({ error: 'not implemented' }),
 })
 
 function mapUser(session: { user: { id: string; email?: string; user_metadata?: Record<string, unknown> } }): AuthUser {
@@ -80,8 +82,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     clearStore()
   }
 
+  const changePassword: AuthState['changePassword'] = async (currentPassword, newPassword) => {
+    if (!supabase) return { error: 'Supabase non configuré.' }
+    if (!user?.email) return { error: 'Aucune session active.' }
+
+    // Re-verify the current password by attempting to sign in — Supabase
+    // doesn't gate updateUser on it, so we do it explicitly. Successful
+    // re-sign-in just refreshes the existing session.
+    const { error: verifyError } = await supabase.auth.signInWithPassword({
+      email: user.email,
+      password: currentPassword,
+    })
+    if (verifyError) return { error: 'current_invalid' }
+
+    const { error: updateError } = await supabase.auth.updateUser({ password: newPassword })
+    if (updateError) return { error: updateError.message }
+    return {}
+  }
+
   return (
-    <Ctx.Provider value={{ user, loading, signIn, signOut }}>
+    <Ctx.Provider value={{ user, loading, signIn, signOut, changePassword }}>
       {children}
     </Ctx.Provider>
   )
