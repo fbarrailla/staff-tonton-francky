@@ -1,10 +1,13 @@
 import { useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { Search, Sun, Moon, LogOut, ChevronDown } from 'lucide-react'
+import { Search, Sun, Moon, LogOut, ChevronDown, Globe } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useAuth } from '@/contexts/AuthContext'
 import { Avatar } from './ui/Avatar'
-import { cn, formatLongDate, todayISO } from '@/lib/utils'
+import { cn } from '@/lib/utils'
+import { useFormatLongDate, useLang } from '@/hooks/useLocale'
+import { todayISO } from '@/lib/utils'
 
 interface Props {
   title?: ReactNode
@@ -12,9 +15,12 @@ interface Props {
 }
 
 export function Topbar({ title, eyebrow }: Props) {
+  const { t } = useTranslation()
   const { theme, toggle } = useTheme()
   const { user, signOut } = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [lang, setLang] = useLang()
+  const formatLongDate = useFormatLongDate()
 
   return (
     <header className="sticky top-0 z-20 border-b border-line bg-paper/85 backdrop-blur">
@@ -47,7 +53,7 @@ export function Topbar({ title, eyebrow }: Props) {
           />
           <input
             type="search"
-            placeholder="Rechercher un·e salarié·e, un congé…"
+            placeholder={t('topbar.search_placeholder')}
             className="w-full h-9 pl-9 pr-12 text-[13px] rounded-md bg-surface border border-line focus:border-tonton-500 outline-none placeholder:text-ink-faint"
           />
           <kbd className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-mono text-ink-faint bg-paper border border-line rounded px-1.5 py-0.5">
@@ -55,10 +61,31 @@ export function Topbar({ title, eyebrow }: Props) {
           </kbd>
         </div>
 
+        {/* Language switcher */}
+        <div className="inline-flex items-center bg-surface border border-line rounded-md p-0.5 h-9">
+          <Globe size={13} className="text-ink-faint mx-1.5 hidden sm:block" />
+          {(['fr', 'en'] as const).map((code) => (
+            <button
+              key={code}
+              onClick={() => void setLang(code)}
+              className={cn(
+                'h-7 px-2 text-[11px] font-medium rounded uppercase tracking-widish transition-colors',
+                lang === code
+                  ? 'bg-paper text-ink shadow-soft'
+                  : 'text-ink-faint hover:text-ink',
+              )}
+              aria-pressed={lang === code}
+              aria-label={t(`lang.${code}`)}
+            >
+              {code}
+            </button>
+          ))}
+        </div>
+
         <button
           type="button"
           onClick={toggle}
-          aria-label={theme === 'dark' ? 'Passer en mode clair' : 'Passer en mode sombre'}
+          aria-label={theme === 'dark' ? t('topbar.to_light') : t('topbar.to_dark')}
           className="grid place-items-center h-9 w-9 rounded-md border border-line bg-surface text-ink-soft hover:text-ink hover:border-line-strong transition-colors"
         >
           {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
@@ -77,7 +104,7 @@ export function Topbar({ title, eyebrow }: Props) {
                 {user?.display_name || user?.email}
               </span>
               <span className="text-[10.5px] text-ink-faint tracking-tightish">
-                Connecté·e
+                {t('topbar.connected')}
               </span>
             </div>
             <ChevronDown size={13} className="text-ink-faint" />
@@ -107,7 +134,7 @@ export function Topbar({ title, eyebrow }: Props) {
                     onClick={() => setMenuOpen(false)}
                     className="block px-3 py-2 text-[13px] rounded text-ink-soft hover:bg-surface hover:text-ink"
                   >
-                    Réglages
+                    {t('topbar.settings')}
                   </Link>
                   <button
                     onClick={() => {
@@ -116,7 +143,7 @@ export function Topbar({ title, eyebrow }: Props) {
                     }}
                     className="w-full flex items-center gap-2 px-3 py-2 text-[13px] rounded text-ink-soft hover:bg-surface hover:text-sick"
                   >
-                    <LogOut size={14} /> Se déconnecter
+                    <LogOut size={14} /> {t('topbar.logout')}
                   </button>
                 </div>
               </div>

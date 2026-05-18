@@ -8,24 +8,27 @@ import {
   Stethoscope,
   Settings,
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { useApplicants, useDaysOff } from '@/hooks/useStore'
 
-const items = [
-  { to: '/', label: 'Tableau de bord', icon: LayoutDashboard, end: true },
-  { to: '/equipe', label: 'Équipe', icon: Users },
-  { to: '/candidats', label: 'Candidats', icon: UserPlus },
-  { to: '/calendrier', label: 'Calendrier', icon: CalendarDays },
-  { to: '/conges', label: 'Congés', icon: Plane },
-  { to: '/arrets-maladie', label: 'Arrêts maladie', icon: Stethoscope },
-  { to: '/reglages', label: 'Réglages', icon: Settings },
-]
-
 export function Sidebar() {
+  const { t } = useTranslation()
   const daysOff = useDaysOff()
   const applicants = useApplicants()
   const pendingCount = daysOff.filter((d) => d.status === 'pending').length
   const newApplicants = applicants.filter((a) => a.status === 'nouveau').length
+
+  type NavItem = { to: string; label: string; icon: typeof LayoutDashboard; end?: boolean }
+  const items: NavItem[] = [
+    { to: '/', label: t('nav.dashboard'), icon: LayoutDashboard, end: true },
+    { to: '/equipe', label: t('nav.employees'), icon: Users },
+    { to: '/candidats', label: t('nav.applicants'), icon: UserPlus },
+    { to: '/calendrier', label: t('nav.calendar'), icon: CalendarDays },
+    { to: '/conges', label: t('nav.days_off'), icon: Plane },
+    { to: '/arrets-maladie', label: t('nav.sick_leaves'), icon: Stethoscope },
+    { to: '/reglages', label: t('nav.settings'), icon: Settings },
+  ]
 
   return (
     <aside className="hidden lg:flex w-[248px] shrink-0 flex-col border-r border-line bg-surface/40 backdrop-blur-sm">
@@ -36,7 +39,7 @@ export function Sidebar() {
             <span className="absolute -bottom-1 -right-1 size-2 rounded-full bg-working ring-2 ring-surface" />
           </div>
           <div className="min-w-0">
-            <div className="text-[11px] uppercase tracking-caps text-ink-faint">Backoffice</div>
+            <div className="text-[11px] uppercase tracking-caps text-ink-faint">{t('nav.backoffice')}</div>
             <div className="font-display text-[15px] leading-tight text-ink tracking-tightish">
               Tonton Francky
             </div>
@@ -45,7 +48,7 @@ export function Sidebar() {
       </div>
 
       <nav className="px-3 py-2 flex-1 nice-scroll overflow-y-auto">
-        <div className="label-caps px-3 mb-2">Espace de travail</div>
+        <div className="label-caps px-3 mb-2">{t('nav.workspace')}</div>
         <ul className="flex flex-col gap-0.5">
           {items.map(({ to, label, icon: Icon, end }) => (
             <li key={to}>
@@ -95,10 +98,11 @@ export function Sidebar() {
         <div className="mt-6 mx-3 p-3.5 rounded-md border border-line bg-paper relative overflow-hidden">
           <div className="absolute -top-6 -right-6 size-24 rounded-full bg-tonton-500/15 blur-xl pointer-events-none" />
           <div className="relative">
-            <div className="label-caps mb-1">Astuce</div>
+            <div className="label-caps mb-1">{t('nav.tip_label')}</div>
             <p className="text-[12.5px] text-ink-soft leading-snug">
-              Chaque salarié·e a droit à <span className="text-ink font-medium">4 jours de
-              congé</span> par mois calendaire.
+              {t('nav.tip_quota_pre')}{' '}
+              <span className="text-ink font-medium">{t('nav.tip_quota_strong')}</span>{' '}
+              {t('nav.tip_quota_post')}
             </p>
           </div>
         </div>

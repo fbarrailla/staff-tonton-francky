@@ -1,13 +1,8 @@
 import { useMemo, useState } from 'react'
 import {
-  CheckCircle2,
-  XCircle,
-  Plus,
-  Plane,
-  Edit3,
-  Trash2,
-  MessageSquare,
+  CheckCircle2, XCircle, Plus, Plane, Edit3, Trash2, MessageSquare,
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Layout } from '@/components/Layout'
 import { Avatar } from '@/components/ui/Avatar'
 import { Badge } from '@/components/ui/Badge'
@@ -20,17 +15,23 @@ import { useDaysOff, useEmployees } from '@/hooks/useStore'
 import { mutate } from '@/lib/store'
 import { useToast } from '@/contexts/ToastContext'
 import { DayOffForm } from '@/components/DayOffForm'
-import { cn, formatDate, formatError } from '@/lib/utils'
+import { formatError } from '@/lib/utils'
 import { monthlyDayOffBalance } from '@/lib/derived'
-import { ROLE_LABEL, type DayOff } from '@/types'
+import { type DayOff } from '@/types'
 import { parseISO } from 'date-fns'
+import { useRoleLabel } from '@/hooks/useLabels'
+import { useFormatDate } from '@/hooks/useLocale'
 
 type Filter = 'all' | 'pending' | 'approved' | 'rejected'
 
 export function DaysOffPage() {
+  const { t } = useTranslation()
   const employees = useEmployees()
   const daysOff = useDaysOff()
   const toast = useToast()
+  const roleLabel = useRoleLabel()
+  const fmt = useFormatDate()
+
   const [tab, setTab] = useState<Filter>('pending')
   const [openCreate, setOpenCreate] = useState(false)
   const [editing, setEditing] = useState<DayOff | null>(null)
@@ -52,82 +53,51 @@ export function DaysOffPage() {
   async function approve(d: DayOff) {
     try {
       await mutate.updateDayOff(d.id, { status: 'approved' })
-      toast.success('Congé approuvé')
-    } catch (e) {
-      toast.error('Action impossible', formatError(e))
-    }
+      toast.success(t('days_off.leave_approved_toast'))
+    } catch (e) { toast.error(t('errors.action_failed'), formatError(e)) }
   }
-
-  function startReject(d: DayOff) {
-    setRejecting(d)
-    setRejectNote('')
-  }
-
+  function startReject(d: DayOff) { setRejecting(d); setRejectNote('') }
   async function confirmReject() {
     if (!rejecting) return
     try {
-      await mutate.updateDayOff(rejecting.id, {
-        status: 'rejected',
-        admin_note: rejectNote || null,
-      })
+      await mutate.updateDayOff(rejecting.id, { status: 'rejected', admin_note: rejectNote || null })
       setRejecting(null)
-      toast.info('Congé refusé')
-    } catch (e) {
-      toast.error('Action impossible', formatError(e))
-    }
+      toast.info(t('days_off.leave_rejected_toast'))
+    } catch (e) { toast.error(t('errors.action_failed'), formatError(e)) }
   }
-
   async function remove(d: DayOff) {
-    try {
-      await mutate.deleteDayOff(d.id)
-      toast.info('Demande supprimée')
-    } catch (e) {
-      toast.error('Suppression impossible', formatError(e))
-    }
+    try { await mutate.deleteDayOff(d.id); toast.info(t('days_off.request_deleted_toast')) }
+    catch (e) { toast.error(t('errors.delete_failed'), formatError(e)) }
   }
 
   return (
-    <Layout eyebrow="Ressources humaines" title="Congés">
+    <Layout eyebrow={t('days_off.eyebrow')} title={t('days_off.title')}>
       <header className="flex items-end justify-between gap-4 flex-wrap mb-5">
-        <p className="text-[14px] text-ink-soft max-w-[60ch]">
-          Demandes de congés de l'équipe — 4 jours autorisés par mois calendaire pour chaque salarié·e.
-          Vous pouvez exceptionnellement dépasser ce quota en tant qu'administrateur.
-        </p>
+        <p className="text-[14px] text-ink-soft max-w-[60ch]">{t('days_off.intro')}</p>
         <Button variant="primary" iconLeft={<Plus size={14} />} onClick={() => setOpenCreate(true)}>
-          Nouvelle demande
+          {t('days_off.new_request')}
         </Button>
       </header>
 
       <div className="flex items-center justify-between gap-4 flex-wrap mb-5">
-        <Tabs<Filter>
-          value={tab}
-          onChange={setTab}
+        <Tabs<Filter> value={tab} onChange={setTab}
           items={[
-            { value: 'pending', label: 'En attente', count: counts.pending },
-            { value: 'approved', label: 'Approuvés', count: counts.approved },
-            { value: 'rejected', label: 'Refusés', count: counts.rejected },
-            { value: 'all', label: 'Tout', count: counts.all },
-          ]}
-        />
+            { value: 'pending', label: t('days_off.tab_pending'), count: counts.pending },
+            { value: 'approved', label: t('days_off.tab_approved'), count: counts.approved },
+            { value: 'rejected', label: t('days_off.tab_rejected'), count: counts.rejected },
+            { value: 'all', label: t('days_off.tab_all'), count: counts.all },
+          ]} />
         <div className="text-[12px] text-ink-faint tabular">
           {counts.pending > 0 && (
-            <span className="text-pending">
-              {counts.pending} demande{counts.pending > 1 ? 's' : ''} en attente de votre validation
-            </span>
+            <span className="text-pending">{t('days_off.pending_alert', { count: counts.pending })}</span>
           )}
         </div>
       </div>
 
       {filtered.length === 0 ? (
-        <EmptyState
-          icon={<Plane size={20} />}
-          title={tab === 'pending' ? 'Aucune demande en attente' : 'Rien à afficher'}
-          description={
-            tab === 'pending'
-              ? "Bravo — l'équipe n'a aucune demande en suspens."
-              : 'Aucun élément ne correspond à ce filtre.'
-          }
-        />
+        <EmptyState icon={<Plane size={20} />}
+          title={tab === 'pending' ? t('days_off.empty_pending_title') : t('days_off.empty_other_title')}
+          description={tab === 'pending' ? t('days_off.empty_pending_desc') : t('days_off.empty_other_desc')} />
       ) : (
         <div className="surface-card divide-y divide-line overflow-hidden">
           {filtered.map((d) => {
@@ -141,22 +111,23 @@ export function DaysOffPage() {
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="text-[14.5px] font-medium text-ink">{emp.full_name}</span>
-                    <span className="text-[12px] text-ink-faint">{ROLE_LABEL[emp.role]}</span>
+                    <span className="text-[12px] text-ink-faint">{roleLabel(emp.role)}</span>
                     <Badge tone={d.status === 'approved' ? 'approved' : d.status === 'pending' ? 'pending' : 'rejected'} dot>
-                      {d.status === 'approved' ? 'Approuvé' : d.status === 'pending' ? 'En attente' : 'Refusé'}
+                      {d.status === 'approved' ? t('days_off.status_approved')
+                        : d.status === 'pending' ? t('days_off.status_pending')
+                        : t('days_off.status_rejected')}
                     </Badge>
-                    {over && <Badge tone="sick">Dépasse le quota</Badge>}
+                    {over && <Badge tone="sick">{t('days_off.exceeds_quota')}</Badge>}
                   </div>
                   <div className="text-[12.5px] text-ink-soft mt-1 tabular">
-                    {formatDate(d.start_date)} → {formatDate(d.end_date)}{' '}
-                    <span className="text-ink-faint">· {d.number_of_days} jour{d.number_of_days > 1 ? 's' : ''}</span>
-                    <span className="text-ink-faint"> · solde {bal.used}/{bal.quota}</span>
+                    {fmt(d.start_date)} → {fmt(d.end_date)}{' '}
+                    <span className="text-ink-faint">· {t('common.day', { count: d.number_of_days })}</span>
+                    <span className="text-ink-faint"> · {t('days_off.balance_hint', { used: bal.used, quota: bal.quota })}</span>
                   </div>
                   <p className="text-[13px] text-ink mt-2 leading-snug max-w-[64ch]">« {d.reason} »</p>
                   {d.admin_note && (
                     <div className="mt-2 flex items-start gap-1.5 text-[12px] text-ink-faint italic">
-                      <MessageSquare size={11} className="mt-0.5" />
-                      <span>{d.admin_note}</span>
+                      <MessageSquare size={11} className="mt-0.5" /><span>{d.admin_note}</span>
                     </div>
                   )}
                 </div>
@@ -164,15 +135,15 @@ export function DaysOffPage() {
                   {d.status === 'pending' && (
                     <>
                       <Button size="sm" variant="primary" iconLeft={<CheckCircle2 size={13} />} onClick={() => void approve(d)}>
-                        Approuver
+                        {t('days_off.approve')}
                       </Button>
                       <Button size="sm" variant="ghost" iconLeft={<XCircle size={13} />} onClick={() => startReject(d)}>
-                        Refuser
+                        {t('days_off.reject')}
                       </Button>
                     </>
                   )}
                   <Button size="sm" variant="ghost" iconLeft={<Edit3 size={13} />} onClick={() => setEditing(d)}>
-                    Modifier
+                    {t('days_off.edit')}
                   </Button>
                   <Button size="sm" variant="ghost" iconLeft={<Trash2 size={13} />} onClick={() => void remove(d)} />
                 </div>
@@ -182,62 +153,31 @@ export function DaysOffPage() {
         </div>
       )}
 
-      <Dialog
-        open={openCreate}
-        onClose={() => setOpenCreate(false)}
-        title="Nouvelle demande de congé"
-        side="right"
-      >
-        <DayOffForm
-          employees={employees}
-          existingDaysOff={daysOff}
-          onSaved={() => {
-            setOpenCreate(false)
-            toast.success('Demande créée')
-          }}
-          onCancel={() => setOpenCreate(false)}
-        />
+      <Dialog open={openCreate} onClose={() => setOpenCreate(false)}
+        title={t('days_off.new_dialog_title')} side="right">
+        <DayOffForm employees={employees} existingDaysOff={daysOff}
+          onSaved={() => { setOpenCreate(false); toast.success(t('days_off.request_created_toast')) }}
+          onCancel={() => setOpenCreate(false)} />
       </Dialog>
 
-      <Dialog
-        open={editing !== null}
-        onClose={() => setEditing(null)}
-        title="Modifier le congé"
-        side="right"
-      >
+      <Dialog open={editing !== null} onClose={() => setEditing(null)}
+        title={t('days_off.edit_dialog_title')} side="right">
         {editing && (
-          <DayOffForm
-            employees={employees}
-            existingDaysOff={daysOff}
-            initial={editing}
-            onSaved={() => {
-              setEditing(null)
-              toast.success('Mise à jour')
-            }}
-            onCancel={() => setEditing(null)}
-          />
+          <DayOffForm employees={employees} existingDaysOff={daysOff} initial={editing}
+            onSaved={() => { setEditing(null); toast.success(t('common.updated')) }}
+            onCancel={() => setEditing(null)} />
         )}
       </Dialog>
 
-      <Dialog
-        open={rejecting !== null}
-        onClose={() => setRejecting(null)}
-        title="Refuser cette demande ?"
-        description="Vous pouvez préciser un motif que la personne pourra consulter."
-        footer={
-          <>
-            <Button variant="ghost" onClick={() => setRejecting(null)}>Annuler</Button>
-            <Button variant="danger" onClick={() => void confirmReject()}>Refuser</Button>
-          </>
-        }
-      >
-        <Textarea
-          label="Note (facultatif)"
-          value={rejectNote}
-          onChange={(e) => setRejectNote(e.target.value)}
-          rows={3}
-          placeholder="Ex. Période trop chargée — à reporter sur la première quinzaine du mois prochain."
-        />
+      <Dialog open={rejecting !== null} onClose={() => setRejecting(null)}
+        title={t('days_off.reject_dialog_title')} description={t('days_off.reject_dialog_desc')}
+        footer={<>
+          <Button variant="ghost" onClick={() => setRejecting(null)}>{t('common.cancel')}</Button>
+          <Button variant="danger" onClick={() => void confirmReject()}>{t('days_off.refuse_btn')}</Button>
+        </>}>
+        <Textarea label={t('days_off.reject_note_label')} value={rejectNote}
+          onChange={(e) => setRejectNote(e.target.value)} rows={3}
+          placeholder={t('days_off.reject_note_ph')} />
       </Dialog>
     </Layout>
   )

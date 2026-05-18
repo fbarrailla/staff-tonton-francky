@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from './contexts/AuthContext'
 import { Login } from './pages/Login'
 import { Dashboard } from './pages/Dashboard'
@@ -25,6 +26,7 @@ function FullScreenLoader({ label }: { label?: string }) {
 }
 
 function RequireAuth({ children }: { children: JSX.Element }) {
+  const { t } = useTranslation()
   const { user, loading } = useAuth()
   const { loading: storeLoading, hydrated, error } = useStoreStatus()
   const location = useLocation()
@@ -36,10 +38,8 @@ function RequireAuth({ children }: { children: JSX.Element }) {
     return (
       <div className="min-h-screen grid place-items-center px-6 text-center">
         <div className="max-w-md">
-          <div className="label-caps mb-2 text-sick">Erreur de connexion à la base</div>
-          <p className="text-[14px] text-ink mb-3">
-            Impossible de récupérer les données depuis Supabase.
-          </p>
+          <div className="label-caps mb-2 text-sick">{t('errors.supabase_load_title')}</div>
+          <p className="text-[14px] text-ink mb-3">{t('errors.supabase_load_body')}</p>
           <p className="text-[12.5px] text-ink-soft font-mono bg-surface border border-line rounded-md p-3">
             {error}
           </p>
@@ -47,14 +47,14 @@ function RequireAuth({ children }: { children: JSX.Element }) {
             onClick={() => location.pathname && window.location.reload()}
             className="mt-4 text-[12.5px] text-tonton-600 hover:underline"
           >
-            Réessayer
+            {t('common.retry')}
           </button>
         </div>
       </div>
     )
   }
 
-  if (storeLoading && !hydrated) return <FullScreenLoader label="Chargement des données…" />
+  if (storeLoading && !hydrated) return <FullScreenLoader label={t('common.loading_data')} />
 
   return children
 }
