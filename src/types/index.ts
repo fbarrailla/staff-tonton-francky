@@ -2,6 +2,10 @@ export type UUID = string
 
 export type EmployeeStatus = 'active' | 'inactive'
 export type EmployeeRole =
+  | 'ceo'
+  | 'cgo'
+  | 'project_director'
+  | 'cto'
   | 'account_administrator'
   | 'twitch_moderator'
   | 'webmaster'
@@ -13,6 +17,10 @@ export type EmployeeRole =
   | 'intern'
 
 export const EMPLOYEE_ROLES: EmployeeRole[] = [
+  'ceo',
+  'cgo',
+  'project_director',
+  'cto',
   'account_administrator',
   'twitch_moderator',
   'webmaster',
@@ -158,6 +166,10 @@ export interface CalendarEvent {
 }
 
 export const ROLE_LABEL: Record<EmployeeRole, string> = {
+  ceo: 'CEO',
+  cgo: 'CGO',
+  project_director: 'Project director',
+  cto: 'CTO',
   account_administrator: 'Account administrator',
   twitch_moderator: 'Twitch moderator',
   webmaster: 'Webmaster',

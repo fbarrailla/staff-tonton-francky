@@ -557,6 +557,10 @@
     "data_intro": "Les données sont synchronisées avec votre projet Supabase. Les modifications faites depuis le backoffice sont immédiatement visibles pour les autres utilisateurs connectés."
   },
   "roles": {
+    "ceo": "CEO",
+    "cgo": "CGO",
+    "project_director": "Directeur·rice de projet",
+    "cto": "CTO",
     "account_administrator": "Administrateur·rice de compte",
     "twitch_moderator": "Modérateur·rice Twitch",
     "webmaster": "Webmaster",

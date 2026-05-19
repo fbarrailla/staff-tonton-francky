@@ -99,6 +99,12 @@ function toISODate(raw: unknown): string | null {
 // =============================================================================
 // Keys are lowercased substrings; the FIRST match wins (so order matters).
 const ROLE_RULES: { match: RegExp; role: EmployeeRole }[] = [
+  // Leadership — match the specific acronyms before any broader rule
+  { match: /\bceo\b/i, role: 'ceo' },
+  { match: /\bcgo\b/i, role: 'cgo' },
+  { match: /\bcto\b/i, role: 'cto' },
+  { match: /\bproject[\s_-]?director\b|directeur[\s_-]?(?:de[\s_-]?)?projet/i, role: 'project_director' },
+
   // Twitch moderators are common in this team's data — keep this rule
   // before the broader "moderator/support" matchers
   { match: /\btwitch\b/i, role: 'twitch_moderator' },
@@ -129,8 +135,10 @@ const ROLE_RULES: { match: RegExp; role: EmployeeRole }[] = [
   // Travel / Agent / generic
   { match: /\b(travel|voyage|agent|operator|advisor)\b/i, role: 'agent' },
 
-  // Leadership has no dedicated slot — surface as agent (will need re-classification)
-  { match: /\b(ceo|cgo|coo|cmo|cfo|founder|director|directeur|chief|gérant|gerant|head\sof)\b/i, role: 'agent' },
+  // Other leadership titles (COO/CFO/CMO/Founder/Director/etc.) — no
+  // dedicated slot in the enum yet, fall back to project_director as the
+  // closest leadership bucket
+  { match: /\b(coo|cmo|cfo|founder|director|directeur|chief|gérant|gerant|head\sof)\b/i, role: 'project_director' },
 ]
 
 export function inferRole(position: string): EmployeeRole {
