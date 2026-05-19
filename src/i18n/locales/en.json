@@ -652,6 +652,16 @@
     "weekend_skipped": "Weekend — no target",
     "your_entries": "Your entries"
   },
+  "copy_emails": {
+    "button": "Copy emails",
+    "tooltip": "Copies {{count}} comma-separated address(es)",
+    "done_title": "Copied",
+    "done_body_one": "1 address in your clipboard",
+    "done_body_other": "{{count}} addresses in your clipboard",
+    "empty_title": "Nothing to copy",
+    "empty_body": "No email address in the current selection.",
+    "failed_title": "Couldn't copy"
+  },
   "import": {
     "open_btn": "Import Excel",
     "dialog_title": "Import from Excel",

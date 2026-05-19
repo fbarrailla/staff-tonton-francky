@@ -17,6 +17,7 @@ import { COMMON_SKILLS, type EmployeeRole, type Employee } from '@/types'
 import { employeeStatusToday } from '@/lib/derived'
 import { EmployeeForm } from '@/components/EmployeeForm'
 import { ImportEmployeesDialog } from '@/components/ImportEmployeesDialog'
+import { CopyEmailsButton } from '@/components/ui/CopyEmailsButton'
 import { useToast } from '@/contexts/ToastContext'
 import { cn, formatError } from '@/lib/utils'
 import { useRoleLabel } from '@/hooks/useLabels'
@@ -97,7 +98,8 @@ export function Employees() {
     <Layout eyebrow={t('employees.eyebrow')} title={t('employees.title')}>
       <header className="flex items-end justify-between gap-4 flex-wrap mb-5">
         <p className="text-[14px] text-ink-soft max-w-[60ch]">{t('employees.intro')}</p>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <CopyEmailsButton emails={filtered.map(({ e }) => e.email)} />
           <Button variant="secondary" iconLeft={<Upload size={14} />} onClick={() => setOpenImport(true)}>
             {t('import.open_btn')}
           </Button>

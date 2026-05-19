@@ -12,6 +12,7 @@ import { useInterns } from '@/hooks/useStore'
 import { mutate } from '@/lib/store'
 import { type Intern, type InternStatus } from '@/types'
 import { InternForm } from '@/components/InternForm'
+import { CopyEmailsButton } from '@/components/ui/CopyEmailsButton'
 import { useToast } from '@/contexts/ToastContext'
 import { formatError } from '@/lib/utils'
 import { useInternStatusLabel } from '@/hooks/useLabels'
@@ -106,9 +107,12 @@ export function Interns() {
     <Layout eyebrow={t('interns.eyebrow')} title={t('interns.title')}>
       <header className="flex items-end justify-between gap-4 flex-wrap mb-5">
         <p className="text-[14px] text-ink-soft max-w-[60ch]">{t('interns.intro')}</p>
-        <Button variant="primary" iconLeft={<Plus size={14} />} onClick={() => setOpenAdd(true)}>
-          {t('interns.new_intern')}
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <CopyEmailsButton emails={filtered.map((i) => i.email)} />
+          <Button variant="primary" iconLeft={<Plus size={14} />} onClick={() => setOpenAdd(true)}>
+            {t('interns.new_intern')}
+          </Button>
+        </div>
       </header>
 
       <div className="flex flex-wrap items-center gap-3 mb-6">

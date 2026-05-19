@@ -654,6 +654,16 @@
     "weekend_skipped": "Week-end — pas d'objectif",
     "your_entries": "Vos entrées"
   },
+  "copy_emails": {
+    "button": "Copier les e-mails",
+    "tooltip": "Copie {{count}} adresse(s) séparées par des virgules",
+    "done_title": "Copié",
+    "done_body_one": "1 adresse dans le presse-papiers",
+    "done_body_other": "{{count}} adresses dans le presse-papiers",
+    "empty_title": "Rien à copier",
+    "empty_body": "Aucune adresse e-mail dans la sélection courante.",
+    "failed_title": "Copie impossible"
+  },
   "import": {
     "open_btn": "Importer Excel",
     "dialog_title": "Importer depuis Excel",

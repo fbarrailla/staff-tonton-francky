@@ -17,6 +17,7 @@ import { mutate } from '@/lib/store'
 import { uploadApplicantFile } from '@/lib/storage'
 import { COMMON_SKILLS, type Applicant, type ApplicantStatus } from '@/types'
 import { ApplicantForm } from '@/components/ApplicantForm'
+import { CopyEmailsButton } from '@/components/ui/CopyEmailsButton'
 import { useToast } from '@/contexts/ToastContext'
 import { formatError } from '@/lib/utils'
 import { useApplicantStatusLabel } from '@/hooks/useLabels'
@@ -90,9 +91,12 @@ export function Applicants() {
     <Layout eyebrow={t('applicants.eyebrow')} title={t('applicants.title')}>
       <header className="flex items-end justify-between gap-4 flex-wrap mb-5">
         <p className="text-[14px] text-ink-soft max-w-[60ch]">{t('applicants.intro')}</p>
-        <Button variant="primary" iconLeft={<Plus size={14} />} onClick={() => setOpenAdd(true)}>
-          {t('applicants.new_application')}
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <CopyEmailsButton emails={filtered.map((a) => a.email)} />
+          <Button variant="primary" iconLeft={<Plus size={14} />} onClick={() => setOpenAdd(true)}>
+            {t('applicants.new_application')}
+          </Button>
+        </div>
       </header>
 
       <div className="flex flex-wrap items-center gap-3 mb-5">
