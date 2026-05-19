@@ -73,6 +73,29 @@ export function nowISO() {
   return new Date().toISOString()
 }
 
+/**
+ * Days until the next birthday + age the person will turn.
+ * Returns null when dob is missing or invalid.
+ * Considers today (0 days) up to the same day next year.
+ */
+export function nextBirthday(
+  dob: string | null | undefined,
+  ref: Date = new Date(),
+): { days: number; turning: number; date: Date } | null {
+  if (!dob) return null
+  const birth = parseISO(dob)
+  if (Number.isNaN(birth.getTime())) return null
+  const today = new Date(ref.getFullYear(), ref.getMonth(), ref.getDate())
+  let next = new Date(today.getFullYear(), birth.getMonth(), birth.getDate())
+  if (next < today) {
+    next = new Date(today.getFullYear() + 1, birth.getMonth(), birth.getDate())
+  }
+  const days = Math.round((next.getTime() - today.getTime()) / 86400000)
+  const turning = next.getFullYear() - birth.getFullYear()
+  if (turning <= 0 || turning > 130) return null
+  return { days, turning, date: next }
+}
+
 /** Whole-year age computed from a YYYY-MM-DD birth date; null when invalid. */
 export function ageFromDob(dob: string | null | undefined): number | null {
   if (!dob) return null

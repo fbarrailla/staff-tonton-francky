@@ -9,6 +9,7 @@ import {
   Sparkles,
   Users,
   CalendarRange,
+  Cake,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Layout } from '@/components/Layout'
@@ -21,7 +22,7 @@ import {
   employeeStatusToday,
   monthlyDayOffBalance,
 } from '@/lib/derived'
-import { cn, formatError, todayISO } from '@/lib/utils'
+import { cn, formatError, nextBirthday, todayISO } from '@/lib/utils'
 import { useToast } from '@/contexts/ToastContext'
 import { useRoleLabel } from '@/hooks/useLabels'
 import { useDateLocale, useFormatDate } from '@/hooks/useLocale'
@@ -60,6 +61,16 @@ export function Dashboard() {
 
   const totalRemaining = balances.reduce((s, b) => s + b.bal.remaining, 0)
   const totalQuota = balances.reduce((s, b) => s + b.bal.quota, 0)
+
+  // Birthdays in the next 60 days, soonest first
+  const birthdays = useMemo(() => {
+    const out: Array<{ employee: typeof employees[number]; days: number; turning: number; date: Date }> = []
+    for (const e of employees) {
+      const b = nextBirthday(e.date_of_birth)
+      if (b && b.days <= 60) out.push({ employee: e, ...b })
+    }
+    return out.sort((a, b) => a.days - b.days).slice(0, 6)
+  }, [employees])
 
   const upcoming = useMemo(() => {
     const items: Array<{
@@ -350,6 +361,66 @@ export function Dashboard() {
                           {fmt(item.from, 'd MMM')}
                         </div>
                       </div>
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
+          </div>
+
+          <div>
+            <header className="flex items-end justify-between mb-3">
+              <div>
+                <h2 className="display text-[22px] text-ink inline-flex items-center gap-1.5">
+                  <Cake size={16} className="text-tonton-500" />
+                  {t('dashboard.birthdays_title')}
+                </h2>
+                <p className="text-[13px] text-ink-soft mt-0.5">{t('dashboard.birthdays_subtitle')}</p>
+              </div>
+              <Link to="/equipe" className="text-[12.5px] text-ink-soft hover:text-ink">
+                {t('dashboard.birthdays_see_all')}
+              </Link>
+            </header>
+            {birthdays.length === 0 ? (
+              <div className="surface-card p-5 text-center text-[12.5px] text-ink-soft leading-snug">
+                {t('dashboard.birthdays_empty')}
+              </div>
+            ) : (
+              <ul className="surface-card divide-y divide-line overflow-hidden">
+                {birthdays.map(({ employee: e, days, turning, date }) => {
+                  const isToday = days === 0
+                  const isTomorrow = days === 1
+                  return (
+                    <li key={e.id}>
+                      <Link
+                        to={`/equipe/${e.id}`}
+                        className={cn(
+                          'p-3.5 flex items-center gap-3 hover:bg-surface/60 transition-colors',
+                          isToday && 'bg-tonton-500/8',
+                        )}
+                      >
+                        <Avatar name={e.full_name} src={e.avatar_url} size={32} />
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="text-[13px] font-medium text-ink truncate">{e.full_name}</span>
+                            {isToday && <Cake size={11} className="text-tonton-500" />}
+                          </div>
+                          <div className="text-[11.5px] text-ink-faint mt-0.5">
+                            {t('dashboard.birthdays_turns', { count: turning, age: turning })}
+                            <span className="text-ink-faint/70"> · {fmt(date.toISOString().slice(0,10), 'd MMM')}</span>
+                          </div>
+                        </div>
+                        <span className={cn(
+                          'text-[11px] font-medium tracking-tightish tabular shrink-0',
+                          isToday ? 'text-tonton-600 dark:text-tonton-400'
+                            : isTomorrow ? 'text-tonton-700/80 dark:text-tonton-300/80'
+                            : 'text-ink-soft',
+                        )}>
+                          {isToday ? t('dashboard.birthdays_today')
+                            : isTomorrow ? t('dashboard.birthdays_tomorrow')
+                            : t('dashboard.birthdays_in_days', { count: days })}
+                        </span>
+                      </Link>
                     </li>
                   )
                 })}
