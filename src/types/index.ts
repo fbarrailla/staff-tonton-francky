@@ -7,6 +7,7 @@ export type EmployeeRole =
   | 'project_director'
   | 'cto'
   | 'account_administrator'
+  | 'hr_staff'
   | 'twitch_moderator'
   | 'webmaster'
   | 'graphic_designer'
@@ -23,6 +24,7 @@ export const EMPLOYEE_ROLES: EmployeeRole[] = [
   'project_director',
   'cto',
   'account_administrator',
+  'hr_staff',
   'twitch_moderator',
   'webmaster',
   'graphic_designer',
@@ -176,6 +178,7 @@ export const ROLE_LABEL: Record<EmployeeRole, string> = {
   project_director: 'Project director',
   cto: 'CTO',
   account_administrator: 'Account administrator',
+  hr_staff: 'HR staff',
   twitch_moderator: 'Twitch moderator',
   webmaster: 'Webmaster',
   graphic_designer: 'Graphic designer',

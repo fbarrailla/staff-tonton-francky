@@ -7,7 +7,7 @@
 --
 -- Currently authoritative role set (15 values):
 --   ceo, cgo, project_director, cto                            (leadership)
---   account_administrator, twitch_moderator                    (operations)
+--   account_administrator, hr_staff, twitch_moderator          (operations)
 --   webmaster, graphic_designer, copywriter, video_makers      (creative / web)
 --   marketing_specialist, community_manager                    (marketing)
 --   agent, intern                                              (general)
@@ -56,7 +56,7 @@ set role = case
   -- already on the new set — leave as-is
   when e.role in (
     'ceo','cgo','project_director','cto',
-    'account_administrator','twitch_moderator','webmaster','graphic_designer',
+    'account_administrator','hr_staff','twitch_moderator','webmaster','graphic_designer',
     'copywriter','video_makers','marketing_specialist','community_manager',
     'agent','intern'
   ) then e.role
@@ -70,7 +70,7 @@ alter table public.employees
   add constraint employees_role_check
   check (role in (
     'ceo','cgo','project_director','cto',
-    'account_administrator','twitch_moderator','webmaster','graphic_designer',
+    'account_administrator','hr_staff','twitch_moderator','webmaster','graphic_designer',
     'copywriter','video_makers','marketing_specialist','community_manager',
     'agent','intern'
   ));

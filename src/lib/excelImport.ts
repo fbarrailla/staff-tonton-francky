@@ -110,6 +110,10 @@ const ROLE_RULES: { match: RegExp; role: EmployeeRole }[] = [
   { match: /\btwitch\b/i, role: 'twitch_moderator' },
   { match: /\b(moderator|moderateur|modérateur)\b/i, role: 'twitch_moderator' },
 
+  // HR — match before generic "admin" rules
+  { match: /\b(hr[\s_-]?staff|human[\s_-]?resources?|ressources?[\s_-]?humaines?|talent[\s_-]?acquisition|recruiter|recruteur)\b/i, role: 'hr_staff' },
+  { match: /\bhr\b/i, role: 'hr_staff' },
+
   // Account / admin / finance
   { match: /\b(account[\s_-]?admin|account[\s_-]?administrator|admin[\s_-]?account)\b/i, role: 'account_administrator' },
   { match: /\b(comptable|accountant|finance|bookkeep)/i, role: 'account_administrator' },
