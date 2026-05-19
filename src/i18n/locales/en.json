@@ -668,7 +668,9 @@
     "missing_one": "{{count}}h missing",
     "missing_other": "{{count}}h missing",
     "weekend_skipped": "Weekend — no target",
-    "your_entries": "Your entries"
+    "your_entries": "Your entries",
+    "today_empty_title": "Nothing logged today yet",
+    "today_empty_body": "Target: {{target}}h. Add your first task below."
   },
   "copy_emails": {
     "button": "Copy emails",
@@ -741,7 +743,16 @@
     "detail_title": "{{name}} — Week of {{date}}",
     "detail_intro": "Tasks {{name}} logged this week.",
     "empty_employee_week": "No entries for {{name}} this week.",
-    "no_employees": "No team members yet."
+    "no_employees": "No team members yet.",
+    "behind_alert_title_one": "1 person is behind this week",
+    "behind_alert_title_other": "{{count}} people are behind this week",
+    "behind_alert_body": "{{hours}}h missing across the team target.",
+    "show_only_behind": "Show only behind",
+    "show_all": "Show everyone",
+    "gap_one": "1 empty day",
+    "gap_other": "{{count}} empty days",
+    "missing_hours": "−{{hours}}h",
+    "behind_chip": "Behind"
   },
   "intern_form": {
     "full_name": "Full name",

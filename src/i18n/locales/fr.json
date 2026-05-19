@@ -670,7 +670,9 @@
     "missing_one": "Il manque {{count}}h",
     "missing_other": "Il manque {{count}}h",
     "weekend_skipped": "Week-end — pas d'objectif",
-    "your_entries": "Vos entrées"
+    "your_entries": "Vos entrées",
+    "today_empty_title": "Vous n'avez encore rien noté aujourd'hui",
+    "today_empty_body": "Objectif : {{target}}h. Saisissez votre première tâche ci-dessous."
   },
   "copy_emails": {
     "button": "Copier les e-mails",
@@ -743,7 +745,16 @@
     "detail_title": "{{name}} — Semaine du {{date}}",
     "detail_intro": "Tâches déclarées par {{name}} cette semaine.",
     "empty_employee_week": "Aucune entrée pour {{name}} cette semaine.",
-    "no_employees": "Aucun salarié·e dans l'équipe."
+    "no_employees": "Aucun salarié·e dans l'équipe.",
+    "behind_alert_title_one": "1 personne en retard cette semaine",
+    "behind_alert_title_other": "{{count}} personnes en retard cette semaine",
+    "behind_alert_body": "Total manquant : {{hours}}h sur l'objectif équipe.",
+    "show_only_behind": "Voir uniquement les retards",
+    "show_all": "Voir toute l'équipe",
+    "gap_one": "1 jour vide",
+    "gap_other": "{{count}} jours vides",
+    "missing_hours": "−{{hours}}h",
+    "behind_chip": "En retard"
   },
   "intern_form": {
     "full_name": "Nom complet",

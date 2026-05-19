@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import {
-  CalendarClock, ChevronLeft, ChevronRight, Users as UsersIcon, Check, AlertTriangle,
+  CalendarClock, ChevronLeft, ChevronRight, Users as UsersIcon, Check, AlertTriangle, Filter,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -40,6 +40,7 @@ export function TeamTimePage() {
 
   const [cursor, setCursor] = useState(() => new Date())
   const [drillEmployee, setDrillEmployee] = useState<Employee | null>(null)
+  const [onlyBehind, setOnlyBehind] = useState(false)
 
   const weekStart = startOfWeek(cursor, { weekStartsOn: 1 })
   const weekEnd = endOfWeek(cursor, { weekStartsOn: 1 })
@@ -129,6 +130,30 @@ export function TeamTimePage() {
   ).length
   const behind = employees.length - onTrack
 
+  // Precompute per-bucket gap stats so we can both filter and decorate
+  const isPastWeekday = (iso: string) => {
+    const d = parseISO(iso)
+    return !isWeekend(d) && d <= new Date()
+  }
+  const bucketGap = (b: typeof buckets[number]) => {
+    const totals: Record<string, number> = {}
+    for (const e of b.entries) {
+      totals[e.work_date] = (totals[e.work_date] ?? 0) + Number(e.hours)
+    }
+    let emptyDays = 0
+    for (const iso of weekDaysIso) {
+      if (isPastWeekday(iso) && (totals[iso] ?? 0) === 0) emptyDays++
+    }
+    const weekTotal = b.entries.reduce((s, e) => s + Number(e.hours), 0)
+    const missing = Math.max(0, weekTargetPerPerson - weekTotal)
+    return { emptyDays, weekTotal, missing }
+  }
+  const behindBuckets = buckets.filter(
+    (b) => b.employee && bucketGap(b).weekTotal < weekTargetPerPerson,
+  )
+  const totalMissing = behindBuckets.reduce((s, b) => s + bucketGap(b).missing, 0)
+  const visibleBuckets = onlyBehind ? behindBuckets : buckets
+
   // Drill bucket
   const drillBucket = useMemo(() => {
     if (!drillEmployee) return null
@@ -175,6 +200,50 @@ export function TeamTimePage() {
         </div>
       </section>
 
+      {/* BEHIND ALERT — emphasis on unfilled timesheets */}
+      {behindBuckets.length > 0 && (
+        <section className={cn(
+          'mb-5 rounded-lg border border-pending/40 bg-pending/8 px-5 py-4',
+          'flex flex-wrap items-center gap-4',
+        )}>
+          <div className="grid place-items-center h-10 w-10 rounded-full bg-pending/15 text-pending shrink-0">
+            <AlertTriangle size={18} />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="text-[14px] font-medium text-ink">
+              {t('team_time.behind_alert_title', { count: behindBuckets.length })}
+            </div>
+            <div className="text-[12.5px] text-ink-soft mt-0.5">
+              {t('team_time.behind_alert_body', { hours: fmtHours(totalMissing) })}
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex -space-x-2">
+              {behindBuckets.slice(0, 6).map((b) => (
+                <Avatar key={b.key} name={b.label} src={b.avatar} size={28} ring />
+              ))}
+              {behindBuckets.length > 6 && (
+                <span className="grid place-items-center h-7 w-7 rounded-full bg-paper border border-line text-[10.5px] text-ink-soft tabular ring-2 ring-paper">
+                  +{behindBuckets.length - 6}
+                </span>
+              )}
+            </div>
+            <button
+              onClick={() => setOnlyBehind((v) => !v)}
+              className={cn(
+                'inline-flex items-center gap-1.5 h-9 px-3 rounded-md text-[12.5px] font-medium tracking-tightish transition-colors border',
+                onlyBehind
+                  ? 'bg-pending text-white border-pending'
+                  : 'bg-paper text-ink-soft border-line hover:border-line-strong hover:text-ink',
+              )}
+            >
+              <Filter size={13} />
+              {onlyBehind ? t('team_time.show_all') : t('team_time.show_only_behind')}
+            </button>
+          </div>
+        </section>
+      )}
+
       {/* GRID */}
       {employees.length === 0 ? (
         <EmptyState icon={<UsersIcon size={20} />} title={t('team_time.no_employees')} />
@@ -205,25 +274,43 @@ export function TeamTimePage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-line">
-              {buckets.map((b) => {
+              {visibleBuckets.map((b) => {
                 const totals: Record<string, number> = {}
                 for (const e of b.entries) {
                   totals[e.work_date] = (totals[e.work_date] ?? 0) + Number(e.hours)
                 }
                 const weekTotal = b.entries.reduce((s, e) => s + Number(e.hours), 0)
                 const meets = weekTargetPerPerson > 0 && weekTotal >= weekTargetPerPerson
+                const isBehind = !!b.employee && !meets
+                const gap = bucketGap(b)
                 const clickable = !!b.employee
                 return (
                   <tr key={b.key}
                       onClick={() => clickable && setDrillEmployee(b.employee!)}
                       className={cn('transition-colors',
-                        clickable && 'cursor-pointer hover:bg-surface/60')}>
-                    <td className="px-5 py-3">
+                        clickable && 'cursor-pointer hover:bg-surface/60',
+                        isBehind && 'bg-pending/4')}>
+                    <td className={cn(
+                      'px-5 py-3 relative',
+                      isBehind && 'before:content-[\'\'] before:absolute before:left-0 before:top-1 before:bottom-1 before:w-[3px] before:rounded-r before:bg-pending',
+                    )}>
                       <div className="flex items-center gap-3 min-w-0">
                         <Avatar name={b.label} src={b.avatar} size={32} />
                         <div className="min-w-0">
-                          <div className="text-ink font-medium truncate">{b.label}</div>
-                          <div className="text-[11.5px] text-ink-faint truncate">{b.subtitle}</div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-ink font-medium truncate">{b.label}</span>
+                            {isBehind && (
+                              <span className="text-[10px] uppercase tracking-caps font-semibold px-1.5 py-0.5 rounded-sm bg-pending/15 text-pending shrink-0">
+                                {t('team_time.behind_chip')}
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-[11.5px] text-ink-faint truncate">
+                            {b.subtitle}
+                            {isBehind && gap.emptyDays > 0 && (
+                              <span className="text-pending"> · {t('team_time.gap', { count: gap.emptyDays })}</span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </td>
@@ -238,13 +325,14 @@ export function TeamTimePage() {
                       return (
                         <td key={iso} className="py-2 text-center">
                           <span className={cn(
-                            'inline-flex items-center justify-center min-w-[42px] h-7 rounded text-[11.5px] font-medium tabular',
+                            'inline-flex items-center justify-center min-w-[44px] h-7 rounded text-[11.5px] font-medium tabular',
                             weekend ? 'text-ink-faint/60'
                               : future ? 'text-ink-faint'
                               : filled ? 'bg-working/15 text-working'
                               : partial ? 'bg-pending/15 text-pending'
-                              : empty ? 'bg-sick/8 text-sick/80'
-                              : 'text-ink-soft',
+                              : empty
+                                ? 'bg-sick/15 text-sick font-semibold ring-1 ring-inset ring-sick/30'
+                                : 'text-ink-soft',
                           )}>
                             {hours > 0 ? `${fmtHours(hours)}h` : (weekend || future ? '—' : '0')}
                           </span>

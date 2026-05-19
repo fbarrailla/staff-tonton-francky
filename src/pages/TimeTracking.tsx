@@ -1,6 +1,6 @@
 import { FormEvent, useMemo, useState } from 'react'
 import {
-  CalendarClock, Clock, Plus, Edit3, Trash2, Check, AlertTriangle, Sparkles,
+  CalendarClock, Clock, Plus, Edit3, Trash2, Check, AlertTriangle, Sparkles, BellRing,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -146,6 +146,23 @@ export function TimeTrackingPage() {
         {t('time_tracking.intro', { target: DAILY_HOURS_TARGET })}
       </p>
 
+      {/* Today-empty nudge — only on a working day (Mon–Fri) when nothing's logged */}
+      {todayLogged === 0 && !isWeekend(new Date()) && (
+        <section className="mb-6 rounded-lg border border-sick/30 bg-sick/8 px-5 py-4 flex items-center gap-4">
+          <div className="grid place-items-center h-10 w-10 rounded-full bg-sick/15 text-sick shrink-0">
+            <BellRing size={18} />
+          </div>
+          <div className="min-w-0">
+            <div className="text-[14px] font-medium text-ink">
+              {t('time_tracking.today_empty_title')}
+            </div>
+            <div className="text-[12.5px] text-ink-soft mt-0.5">
+              {t('time_tracking.today_empty_body', { target: DAILY_HOURS_TARGET })}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* HERO + WEEK STRIP */}
       <section className="grid lg:grid-cols-[1.1fr_1.4fr] gap-5 lg:gap-6 mb-8">
         <div className="surface-card p-6 relative overflow-hidden">
@@ -221,7 +238,7 @@ export function TimeTrackingPage() {
                           : partial
                             ? 'bg-pending/8 border-pending/30 text-pending'
                             : empty
-                              ? 'bg-sick/5 border-sick/20 text-sick/80'
+                              ? 'bg-sick/12 border-sick/40 text-sick'
                               : 'bg-surface border-line text-ink-soft',
                   )}
                   title={
