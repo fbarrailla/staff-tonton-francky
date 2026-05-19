@@ -2,6 +2,17 @@ import type { Applicant, DayOff, Employee, Intern, SickLeave, TimeEntry } from '
 import { supabase } from './supabase'
 import { formatError } from './utils'
 
+// Drop nullable keys whose value is null/undefined before sending to
+// PostgREST. Prevents 400s like "Could not find the 'X' column in the
+// schema cache" when an optional migration hasn't been applied yet.
+function stripOptional<T extends object>(obj: T, keys: (keyof T)[]): T {
+  const out = { ...obj }
+  for (const k of keys) {
+    if (out[k] === null || out[k] === undefined) delete out[k]
+  }
+  return out
+}
+
 // =============================================================================
 // Source of truth: Supabase. The store keeps an in-memory cache so the UI can
 // read synchronously via useSyncExternalStore; mutations write to Supabase
@@ -134,7 +145,7 @@ export const mutate = {
     const client = requireClient()
     const { data, error } = await client
       .from('employees')
-      .insert(input)
+      .insert(stripOptional(input, ['date_of_birth']))
       .select()
       .single()
     if (error) throw new Error(error.message)
@@ -149,7 +160,7 @@ export const mutate = {
     const client = requireClient()
     const { data, error } = await client
       .from('employees')
-      .update(patch)
+      .update(stripOptional(patch, ['date_of_birth']))
       .eq('id', id)
       .select()
       .single()
@@ -172,9 +183,10 @@ export const mutate = {
   async upsertEmployees(inputs: Omit<Employee, 'id' | 'created_at' | 'updated_at'>[]) {
     const client = requireClient()
     if (inputs.length === 0) return [] as Employee[]
+    const payload = inputs.map((i) => stripOptional(i, ['date_of_birth']))
     const { data, error } = await client
       .from('employees')
-      .upsert(inputs, { onConflict: 'email' })
+      .upsert(payload, { onConflict: 'email' })
       .select()
     if (error) throw new Error(error.message)
     const rows = (data ?? []) as Employee[]
@@ -262,7 +274,7 @@ export const mutate = {
     const client = requireClient()
     const { data, error } = await client
       .from('applicants')
-      .insert(input)
+      .insert(stripOptional(input, ['date_of_birth']))
       .select()
       .single()
     if (error) throw new Error(error.message)
@@ -275,7 +287,7 @@ export const mutate = {
     const client = requireClient()
     const { data, error } = await client
       .from('applicants')
-      .update(patch)
+      .update(stripOptional(patch, ['date_of_birth']))
       .eq('id', id)
       .select()
       .single()
@@ -297,7 +309,7 @@ export const mutate = {
     const client = requireClient()
     const { data, error } = await client
       .from('interns')
-      .insert(input)
+      .insert(stripOptional(input, ['date_of_birth']))
       .select()
       .single()
     if (error) throw new Error(error.message)
@@ -310,7 +322,7 @@ export const mutate = {
     const client = requireClient()
     const { data, error } = await client
       .from('interns')
-      .update(patch)
+      .update(stripOptional(patch, ['date_of_birth']))
       .eq('id', id)
       .select()
       .single()
