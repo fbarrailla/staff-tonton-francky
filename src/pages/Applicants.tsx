@@ -18,6 +18,7 @@ import { uploadApplicantFile } from '@/lib/storage'
 import { COMMON_SKILLS, type Applicant, type ApplicantStatus } from '@/types'
 import { ApplicantForm } from '@/components/ApplicantForm'
 import { CopyEmailsButton } from '@/components/ui/CopyEmailsButton'
+import { openNewApplicationDraft } from '@/lib/notify'
 import { useToast } from '@/contexts/ToastContext'
 import { formatError } from '@/lib/utils'
 import { useApplicantStatusLabel } from '@/hooks/useLabels'
@@ -77,9 +78,13 @@ export function Applicants() {
       let motivation_letter_url = data.motivation_letter_url
       if (files.cv) cv_url = await uploadApplicantFile(files.cv, 'cv')
       if (files.motivation) motivation_letter_url = await uploadApplicantFile(files.motivation, 'motivation')
-      await mutate.addApplicant({ ...data, cv_url, motivation_letter_url })
+      const saved = await mutate.addApplicant({ ...data, cv_url, motivation_letter_url })
       setOpenAdd(false)
       toast.success(t('applicants.saved_toast'), data.full_name)
+      // Auto-draft a notification email to the recruiter (Punit) with the
+      // hiring manager (François) in CC — opens the user's mail client with
+      // everything pre-filled. They just press Send.
+      openNewApplicationDraft(saved)
     } catch (e) {
       toast.error(t('errors.add_failed'), formatError(e))
     } finally {
