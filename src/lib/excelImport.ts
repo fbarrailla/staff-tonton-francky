@@ -115,10 +115,14 @@ const ROLE_RULES: { match: RegExp; role: EmployeeRole }[] = [
   { match: /\b(comptable|accountant|finance|bookkeep)/i, role: 'account_administrator' },
   { match: /\baccount\b/i, role: 'account_administrator' },
 
-  // Web / dev / design / IT
+  // Web / dev / IT
   { match: /\b(webmaster|web[\s_-]?master)\b/i, role: 'webmaster' },
   { match: /\b(developer|developpeur|développeur|engineer|cto|dev\b|frontend|backend|fullstack|full[\s_-]?stack)/i, role: 'webmaster' },
-  { match: /\b(ux|ui|graphic|designer|design)\b/i, role: 'webmaster' },
+
+  // Design — split into Graphic designer (specific) vs Webmaster fallback
+  { match: /\b(graphic[\s_-]?designer|graphic|graphist|graphiste)\b/i, role: 'graphic_designer' },
+  { match: /\b(ux|ui|product[\s_-]?designer)\b/i, role: 'graphic_designer' },
+  { match: /\bdesigner?\b/i, role: 'graphic_designer' },
 
   // Content
   { match: /\b(video[s]?[\s_-]?maker[s]?|videograph)/i, role: 'video_makers' },
