@@ -13,7 +13,7 @@ import { Tabs } from '@/components/ui/Tabs'
 import { useDaysOff, useEmployees, useSickLeaves } from '@/hooks/useStore'
 import { mutate } from '@/lib/store'
 import { uploadAvatar } from '@/lib/storage'
-import { COMMON_SKILLS, type EmployeeRole, type Employee } from '@/types'
+import { COMMON_SKILLS, EMPLOYEE_ROLES, type EmployeeRole, type Employee } from '@/types'
 import { employeeStatusToday } from '@/lib/derived'
 import { EmployeeForm } from '@/components/EmployeeForm'
 import { ImportEmployeesDialog } from '@/components/ImportEmployeesDialog'
@@ -24,8 +24,6 @@ import { useRoleLabel } from '@/hooks/useLabels'
 import { useFormatDate } from '@/hooks/useLocale'
 
 type StatusFilter = 'all' | 'working' | 'off' | 'sick'
-
-const ROLES: EmployeeRole[] = ['gerant','agent_voyage','developpeur','ux_designer','support_client','editeur','marketing','comptable']
 
 export function Employees() {
   const { t } = useTranslation()
@@ -125,7 +123,7 @@ export function Employees() {
         <select value={role} onChange={(e) => setRole(e.target.value as 'all' | EmployeeRole)}
           className="h-10 px-3 pr-8 text-sm rounded-md bg-paper border border-line focus:border-tonton-500 outline-none">
           <option value="all">{t('employees.all_roles')}</option>
-          {ROLES.map((r) => <option key={r} value={r}>{roleLabel(r)}</option>)}
+          {EMPLOYEE_ROLES.map((r) => <option key={r} value={r}>{roleLabel(r)}</option>)}
         </select>
 
         <Tabs<StatusFilter> value={status} onChange={setStatus}

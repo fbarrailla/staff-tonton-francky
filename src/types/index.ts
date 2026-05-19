@@ -2,14 +2,27 @@ export type UUID = string
 
 export type EmployeeStatus = 'active' | 'inactive'
 export type EmployeeRole =
-  | 'gerant'
-  | 'agent_voyage'
-  | 'developpeur'
-  | 'ux_designer'
-  | 'support_client'
-  | 'editeur'
-  | 'marketing'
-  | 'comptable'
+  | 'account_administrator'
+  | 'twitch_moderator'
+  | 'webmaster'
+  | 'copywriter'
+  | 'video_makers'
+  | 'marketing_specialist'
+  | 'community_manager'
+  | 'agent'
+  | 'intern'
+
+export const EMPLOYEE_ROLES: EmployeeRole[] = [
+  'account_administrator',
+  'twitch_moderator',
+  'webmaster',
+  'copywriter',
+  'video_makers',
+  'marketing_specialist',
+  'community_manager',
+  'agent',
+  'intern',
+]
 
 export interface Employee {
   id: UUID
@@ -145,14 +158,15 @@ export interface CalendarEvent {
 }
 
 export const ROLE_LABEL: Record<EmployeeRole, string> = {
-  gerant: 'Gérant·e',
-  agent_voyage: 'Agent',
-  developpeur: 'Développeur·se',
-  ux_designer: 'UX Designer',
-  support_client: 'Support client',
-  editeur: 'Éditeur·rice',
-  marketing: 'Marketing',
-  comptable: 'Comptable',
+  account_administrator: 'Account administrator',
+  twitch_moderator: 'Twitch moderator',
+  webmaster: 'Webmaster',
+  copywriter: 'Copywriter',
+  video_makers: 'Video maker',
+  marketing_specialist: 'Marketing specialist',
+  community_manager: 'Community manager',
+  agent: 'Agent',
+  intern: 'Intern',
 }
 
 export const COMMON_SKILLS: string[] = [

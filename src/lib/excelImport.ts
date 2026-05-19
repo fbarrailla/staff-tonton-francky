@@ -99,21 +99,45 @@ function toISODate(raw: unknown): string | null {
 // =============================================================================
 // Keys are lowercased substrings; the FIRST match wins (so order matters).
 const ROLE_RULES: { match: RegExp; role: EmployeeRole }[] = [
-  { match: /\b(ceo|cgo|coo|founder|director|directeur|gérant|gerant|chief)\b/i, role: 'gerant' },
-  { match: /\b(cto|developer|developpeur|développeur|engineer|dev)\b/i, role: 'developpeur' },
-  { match: /\b(ux|ui|graphic|designer)\b/i, role: 'ux_designer' },
-  { match: /\b(account|comptable|accountant|finance)\b/i, role: 'comptable' },
-  { match: /\b(editor|editeur|éditeur|video|writer|content)\b/i, role: 'editeur' },
-  { match: /\b(marketing|community|growth|seo)\b/i, role: 'marketing' },
-  { match: /\b(support|customer|moderator|moderateur|modérateur|twitch|client)\b/i, role: 'support_client' },
-  { match: /\b(travel|voyage|agent)\b/i, role: 'agent_voyage' },
+  // Twitch moderators are common in this team's data — keep this rule
+  // before the broader "moderator/support" matchers
+  { match: /\btwitch\b/i, role: 'twitch_moderator' },
+  { match: /\b(moderator|moderateur|modérateur)\b/i, role: 'twitch_moderator' },
+
+  // Account / admin / finance
+  { match: /\b(account[\s_-]?admin|account[\s_-]?administrator|admin[\s_-]?account)\b/i, role: 'account_administrator' },
+  { match: /\b(comptable|accountant|finance|bookkeep)/i, role: 'account_administrator' },
+  { match: /\baccount\b/i, role: 'account_administrator' },
+
+  // Web / dev / design / IT
+  { match: /\b(webmaster|web[\s_-]?master)\b/i, role: 'webmaster' },
+  { match: /\b(developer|developpeur|développeur|engineer|cto|dev\b|frontend|backend|fullstack|full[\s_-]?stack)/i, role: 'webmaster' },
+  { match: /\b(ux|ui|graphic|designer|design)\b/i, role: 'webmaster' },
+
+  // Content
+  { match: /\b(video[s]?[\s_-]?maker[s]?|videograph)/i, role: 'video_makers' },
+  { match: /\b(video|motion|edit(or|eur)?|éditeur|cinematograph)\b/i, role: 'video_makers' },
+  { match: /\b(copy[\s_-]?writer|writer|rédacteur|redacteur|copy|content|editorial)\b/i, role: 'copywriter' },
+
+  // Marketing & community
+  { match: /\b(community[\s_-]?manager|community)\b/i, role: 'community_manager' },
+  { match: /\b(marketing[\s_-]?specialist|marketing|growth|seo|sea|paid|ads)\b/i, role: 'marketing_specialist' },
+
+  // Internships
+  { match: /\b(intern|stagiaire|internship|stage)\b/i, role: 'intern' },
+
+  // Travel / Agent / generic
+  { match: /\b(travel|voyage|agent|operator|advisor)\b/i, role: 'agent' },
+
+  // Leadership has no dedicated slot — surface as agent (will need re-classification)
+  { match: /\b(ceo|cgo|coo|cmo|cfo|founder|director|directeur|chief|gérant|gerant|head\sof)\b/i, role: 'agent' },
 ]
 
 export function inferRole(position: string): EmployeeRole {
   for (const rule of ROLE_RULES) {
     if (rule.match.test(position)) return rule.role
   }
-  return 'agent_voyage'
+  return 'agent'
 }
 
 // =============================================================================
@@ -201,7 +225,7 @@ export async function parseEmployeesXlsx(file: File): Promise<ParseResult> {
       full_name,
       email,
       phone: colmap.phone !== undefined ? normalizePhone(r[colmap.phone]) : null,
-      role: position ? inferRole(position) : 'agent_voyage',
+      role: position ? inferRole(position) : 'agent',
       skills,
       avatar_url: null,
       hired_at:

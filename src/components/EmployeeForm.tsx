@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Camera, Trash2, Plus } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import type { Employee, EmployeeRole } from '@/types'
-import { COMMON_SKILLS } from '@/types'
+import { COMMON_SKILLS, EMPLOYEE_ROLES } from '@/types'
 import { Input, Select, Textarea } from './ui/Field'
 import { Button } from './ui/Button'
 import { SkillChip } from './ui/SkillChip'
@@ -25,7 +25,7 @@ const EMPTY: Omit<Employee, 'id' | 'created_at' | 'updated_at'> = {
   full_name: '',
   email: '',
   phone: '',
-  role: 'agent_voyage',
+  role: 'agent',
   skills: [],
   avatar_url: null,
   hired_at: todayISO(),
@@ -41,7 +41,6 @@ export function EmployeeForm({
 }: Props) {
   const { t } = useTranslation()
   const roleLabel = useRoleLabel()
-  const ROLES: EmployeeRole[] = ['gerant','agent_voyage','developpeur','ux_designer','support_client','editeur','marketing','comptable']
   const [state, setState] = useState({ ...EMPTY, ...initial })
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
   const [avatarPreview, setAvatarPreview] = useState<string | null>(initial?.avatar_url ?? null)
@@ -128,7 +127,7 @@ export function EmployeeForm({
           onChange={(e) => set('phone', e.target.value)} placeholder={t('employee_form.phone_ph')} />
         <Select label={t('employee_form.role')} value={state.role}
           onChange={(e) => set('role', e.target.value as EmployeeRole)}>
-          {ROLES.map((r) => <option key={r} value={r}>{roleLabel(r)}</option>)}
+          {EMPLOYEE_ROLES.map((r) => <option key={r} value={r}>{roleLabel(r)}</option>)}
         </Select>
         <Input label={t('employee_form.hired_at')} type="date" value={state.hired_at}
           onChange={(e) => set('hired_at', e.target.value)} />

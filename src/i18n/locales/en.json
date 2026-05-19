@@ -555,14 +555,15 @@
     "data_intro": "Data is synced with your Supabase project. Edits made in the backoffice show up immediately for all signed-in users."
   },
   "roles": {
-    "gerant": "Manager",
-    "agent_voyage": "Agent",
-    "developpeur": "Developer",
-    "ux_designer": "UX Designer",
-    "support_client": "Customer support",
-    "editeur": "Editor",
-    "marketing": "Marketing",
-    "comptable": "Accountant"
+    "account_administrator": "Account administrator",
+    "twitch_moderator": "Twitch moderator",
+    "webmaster": "Webmaster",
+    "copywriter": "Copywriter",
+    "video_makers": "Video maker",
+    "marketing_specialist": "Marketing specialist",
+    "community_manager": "Community manager",
+    "agent": "Agent",
+    "intern": "Intern"
   },
   "applicant_status": {
     "nouveau": "New",

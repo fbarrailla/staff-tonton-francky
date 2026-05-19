@@ -557,14 +557,15 @@
     "data_intro": "Les données sont synchronisées avec votre projet Supabase. Les modifications faites depuis le backoffice sont immédiatement visibles pour les autres utilisateurs connectés."
   },
   "roles": {
-    "gerant": "Gérant·e",
-    "agent_voyage": "Agent",
-    "developpeur": "Développeur·se",
-    "ux_designer": "UX Designer",
-    "support_client": "Support client",
-    "editeur": "Éditeur·rice",
-    "marketing": "Marketing",
-    "comptable": "Comptable"
+    "account_administrator": "Administrateur·rice de compte",
+    "twitch_moderator": "Modérateur·rice Twitch",
+    "webmaster": "Webmaster",
+    "copywriter": "Rédacteur·rice",
+    "video_makers": "Vidéaste",
+    "marketing_specialist": "Spécialiste marketing",
+    "community_manager": "Community manager",
+    "agent": "Agent",
+    "intern": "Stagiaire"
   },
   "applicant_status": {
     "nouveau": "Nouveau",
