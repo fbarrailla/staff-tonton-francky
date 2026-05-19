@@ -29,7 +29,16 @@ export function TimeTrackingPage() {
   const { t } = useTranslation()
   const { user } = useAuth()
   const toast = useToast()
-  const entries = useTimeEntries()
+  // Store now holds every authenticated user's entries (so the team view can
+  // join them). The personal page only ever shows / mutates the current
+  // user's rows — RLS for INSERT/UPDATE/DELETE is owner-only, so trying to
+  // edit anyone else's row 400s with "Cannot coerce the result to a single
+  // JSON object". Scope at render time.
+  const allEntries = useTimeEntries()
+  const entries = useMemo(
+    () => (user?.id ? allEntries.filter((e) => e.user_id === user.id) : []),
+    [allEntries, user?.id],
+  )
   const locale = useDateLocale()
   const fmt = useFormatDate()
 
