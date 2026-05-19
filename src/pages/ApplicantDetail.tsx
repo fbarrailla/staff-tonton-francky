@@ -17,7 +17,7 @@ import { mutate } from '@/lib/store'
 import { signedUrl, uploadApplicantFile } from '@/lib/storage'
 import { useToast } from '@/contexts/ToastContext'
 import { type Applicant, type ApplicantStatus } from '@/types'
-import { cn, formatError } from '@/lib/utils'
+import { ageFromDob, cn, formatError } from '@/lib/utils'
 import { useApplicantStatusLabel } from '@/hooks/useLabels'
 import { useFormatDate } from '@/hooks/useLocale'
 
@@ -134,6 +134,14 @@ export function ApplicantDetail() {
             <span className="inline-flex items-center gap-1.5">
               <CalendarIcon size={13} /> {t('applicant_detail.received_on', { date: fmt(applicant.applied_at, 'd MMMM yyyy') })}
             </span>
+            {(() => {
+              const age = ageFromDob(applicant.date_of_birth)
+              return age !== null ? (
+                <span className="inline-flex items-center gap-1.5 tabular">
+                  {t('common.age_years', { count: age })}
+                </span>
+              ) : null
+            })()}
           </div>
         </div>
         <div className="flex gap-2">

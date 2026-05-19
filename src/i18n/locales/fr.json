@@ -36,7 +36,10 @@
     "request_other": "{{count}} demandes",
     "added": "ajouté",
     "removed": "retiré",
-    "updated": "Mise à jour"
+    "updated": "Mise à jour",
+    "date_of_birth": "Date de naissance",
+    "age_years_one": "{{count}} an",
+    "age_years_other": "{{count}} ans"
   },
   "errors": {
     "generic": "Une erreur est survenue",

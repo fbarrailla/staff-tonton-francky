@@ -238,6 +238,7 @@ export async function parseEmployeesXlsx(file: File): Promise<ParseResult> {
       avatar_url: null,
       hired_at:
         (colmap.hired_at !== undefined ? toISODate(r[colmap.hired_at]) : null) ?? todayISO(),
+      date_of_birth: null,
       status: 'active',
     })
   }

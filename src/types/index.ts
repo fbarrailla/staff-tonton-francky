@@ -41,6 +41,7 @@ export interface Employee {
   skills: string[]
   avatar_url: string | null
   hired_at: string // ISO date
+  date_of_birth: string | null // ISO date
   status: EmployeeStatus
   created_at: string
   updated_at: string
@@ -88,6 +89,7 @@ export interface Applicant {
   portfolio_url: string | null          // external URL
   admin_note: string | null
   applied_at: string                    // ISO date
+  date_of_birth: string | null          // ISO date
   created_at: string
   updated_at: string
 }
@@ -108,6 +110,7 @@ export interface Intern {
   email: string
   phone: string | null
   age: number | null
+  date_of_birth: string | null // ISO date — preferred over age when both are present
   applied_at: string | null    // ISO date
   interview_at: string | null  // free-form
   status: InternStatus

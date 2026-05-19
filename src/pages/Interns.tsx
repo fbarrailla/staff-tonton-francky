@@ -14,7 +14,7 @@ import { type Intern, type InternStatus } from '@/types'
 import { InternForm } from '@/components/InternForm'
 import { CopyEmailsButton } from '@/components/ui/CopyEmailsButton'
 import { useToast } from '@/contexts/ToastContext'
-import { formatError } from '@/lib/utils'
+import { ageFromDob, formatError } from '@/lib/utils'
 import { useInternStatusLabel } from '@/hooks/useLabels'
 import { useFormatDate } from '@/hooks/useLocale'
 
@@ -153,9 +153,12 @@ export function Interns() {
                 <Avatar name={i.full_name} size={48} />
                 <div className="min-w-0 flex-1">
                   <div className="display text-[17px] leading-tight text-ink truncate">{i.full_name}</div>
-                  {typeof i.age === 'number' && (
-                    <div className="text-[12.5px] text-ink-soft mt-0.5">{t('interns.age_label', { age: i.age })}</div>
-                  )}
+                  {(() => {
+                    const age = ageFromDob(i.date_of_birth) ?? i.age
+                    return typeof age === 'number' ? (
+                      <div className="text-[12.5px] text-ink-soft mt-0.5">{t('interns.age_label', { age })}</div>
+                    ) : null
+                  })()}
                 </div>
                 <Badge tone={STATUS_TONE[i.status]} dot>{statusLabel(i.status)}</Badge>
               </div>

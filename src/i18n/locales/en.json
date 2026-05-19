@@ -36,7 +36,10 @@
     "request_other": "{{count}} requests",
     "added": "added",
     "removed": "removed",
-    "updated": "Updated"
+    "updated": "Updated",
+    "date_of_birth": "Date of birth",
+    "age_years_one": "{{count}} year",
+    "age_years_other": "{{count}} years"
   },
   "errors": {
     "generic": "Something went wrong",

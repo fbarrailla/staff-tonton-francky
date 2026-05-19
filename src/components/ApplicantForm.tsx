@@ -32,6 +32,7 @@ const EMPTY: Omit<Applicant, 'id' | 'created_at' | 'updated_at'> = {
   portfolio_url: '',
   admin_note: '',
   applied_at: todayISO(),
+  date_of_birth: null,
 }
 
 const STATUSES: ApplicantStatus[] = ['nouveau', 'en_revue', 'entretien', 'embauche', 'refuse']
@@ -95,6 +96,8 @@ export function ApplicantForm({ initial, onSubmit, onCancel, submitting, submitL
           placeholder={t('applicant_form.position_ph')} />
         <Input label={t('applicant_form.applied_at')} type="date" value={state.applied_at}
           onChange={(e) => set('applied_at', e.target.value)} />
+        <Input label={t('common.date_of_birth')} type="date" value={state.date_of_birth ?? ''}
+          onChange={(e) => set('date_of_birth', e.target.value || null)} />
         <Select label={t('applicant_form.status')} value={state.status}
           onChange={(e) => set('status', e.target.value as ApplicantStatus)}>
           {STATUSES.map((s) => <option key={s} value={s}>{statusLabel(s)}</option>)}

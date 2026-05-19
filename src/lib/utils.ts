@@ -73,6 +73,18 @@ export function nowISO() {
   return new Date().toISOString()
 }
 
+/** Whole-year age computed from a YYYY-MM-DD birth date; null when invalid. */
+export function ageFromDob(dob: string | null | undefined): number | null {
+  if (!dob) return null
+  const d = parseISO(dob)
+  if (Number.isNaN(d.getTime())) return null
+  const today = new Date()
+  let age = today.getFullYear() - d.getFullYear()
+  const m = today.getMonth() - d.getMonth()
+  if (m < 0 || (m === 0 && today.getDate() < d.getDate())) age--
+  return age >= 0 && age < 130 ? age : null
+}
+
 /**
  * Robust error → string. Handles:
  *  - Error instances (.message)

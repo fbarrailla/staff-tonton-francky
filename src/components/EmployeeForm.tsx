@@ -29,6 +29,7 @@ const EMPTY: Omit<Employee, 'id' | 'created_at' | 'updated_at'> = {
   skills: [],
   avatar_url: null,
   hired_at: todayISO(),
+  date_of_birth: null,
   status: 'active',
 }
 
@@ -131,6 +132,8 @@ export function EmployeeForm({
         </Select>
         <Input label={t('employee_form.hired_at')} type="date" value={state.hired_at}
           onChange={(e) => set('hired_at', e.target.value)} />
+        <Input label={t('common.date_of_birth')} type="date" value={state.date_of_birth ?? ''}
+          onChange={(e) => set('date_of_birth', e.target.value || null)} />
         <Select label={t('employee_form.status')} value={state.status}
           onChange={(e) => set('status', e.target.value as 'active' | 'inactive')}>
           <option value="active">{t('employee_form.status_active')}</option>

@@ -17,7 +17,7 @@ import { uploadAvatar } from '@/lib/storage'
 import { useToast } from '@/contexts/ToastContext'
 import { COMMON_SKILLS, type Employee } from '@/types'
 import { employeeStatusToday, monthlyDayOffBalance } from '@/lib/derived'
-import { formatError } from '@/lib/utils'
+import { ageFromDob, formatError } from '@/lib/utils'
 import { DayOffForm } from '@/components/DayOffForm'
 import { SickLeaveForm } from '@/components/SickLeaveForm'
 import { useRoleLabel } from '@/hooks/useLabels'
@@ -129,6 +129,14 @@ export function EmployeeDetail() {
             <span className="inline-flex items-center gap-1.5">
               <CalendarIcon size={13} /> {t('employee_detail.hired_at_prefix', { date: fmt(employee.hired_at, 'd MMMM yyyy') })}
             </span>
+            {(() => {
+              const age = ageFromDob(employee.date_of_birth)
+              return age !== null ? (
+                <span className="inline-flex items-center gap-1.5 tabular">
+                  {t('common.age_years', { count: age })}
+                </span>
+              ) : null
+            })()}
           </div>
         </div>
         <div className="flex gap-2">

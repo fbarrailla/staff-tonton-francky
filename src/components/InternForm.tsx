@@ -22,6 +22,7 @@ const EMPTY: Omit<Intern, 'id' | 'created_at' | 'updated_at'> = {
   email: '',
   phone: '',
   age: null,
+  date_of_birth: null,
   applied_at: todayISO(),
   interview_at: '',
   status: 'pending',
@@ -75,6 +76,8 @@ export function InternForm({ initial, onSubmit, onCancel, submitting, submitLabe
         <Input label={t('intern_form.phone')} value={state.phone ?? ''}
           onChange={(e) => set('phone', e.target.value)}
           placeholder={t('intern_form.phone_ph')} iconLeft={<Phone size={14} />} />
+        <Input label={t('common.date_of_birth')} type="date" value={state.date_of_birth ?? ''}
+          onChange={(e) => set('date_of_birth', e.target.value || null)} />
         <Input label={t('intern_form.age')} type="number" min={14} max={99}
           value={state.age ?? ''}
           onChange={(e) => set('age', e.target.value ? Number(e.target.value) : null)} />
