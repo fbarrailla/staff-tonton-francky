@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Layout } from '@/components/Layout'
+import { TeamMap } from '@/components/TeamMap'
 import { useDaysOff, useEmployees, useSickLeaves } from '@/hooks/useStore'
 import { mutate } from '@/lib/store'
 import { Avatar } from '@/components/ui/Avatar'
@@ -467,6 +468,10 @@ export function Dashboard() {
             </div>
           </div>
         </div>
+      </section>
+
+      <section className="mt-8">
+        <TeamMap />
       </section>
     </Layout>
   )

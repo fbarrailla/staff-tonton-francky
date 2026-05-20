@@ -39,7 +39,13 @@
     "updated": "Mise à jour",
     "date_of_birth": "Date de naissance",
     "age_years_one": "{{count}} an",
-    "age_years_other": "{{count}} ans"
+    "age_years_other": "{{count}} ans",
+    "address": "Adresse"
+  },
+  "address": {
+    "placeholder": "Saisissez une rue, une ville…",
+    "hint": "Sélectionnez une entrée dans la liste pour épingler la personne sur la carte.",
+    "no_results": "Aucun résultat — précisez la requête."
   },
   "errors": {
     "generic": "Une erreur est survenue",
@@ -199,6 +205,11 @@
     "birthdays_turns": "fête ses {{age}} ans",
     "birthdays_turns_one": "fête son {{age}}e anniversaire",
     "birthdays_see_all": "Tout voir →",
+    "map_title": "L'équipe dans le monde",
+    "map_subtitle_one": "1 personne localisée sur {{total}}",
+    "map_subtitle_other": "{{count}} personnes localisées sur {{total}}",
+    "map_empty_title": "Aucune adresse renseignée",
+    "map_empty_body": "Modifiez une fiche d'employé·e et saisissez son adresse pour qu'elle apparaisse sur la carte.",
     "see_team": "Voir toute l'équipe →",
     "leave_badge": "Congé",
     "leave_pending_badge": "En attente",

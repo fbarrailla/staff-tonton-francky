@@ -7,6 +7,7 @@ import { Input, Select, Textarea } from './ui/Field'
 import { Button } from './ui/Button'
 import { SkillChip } from './ui/SkillChip'
 import { Avatar } from './ui/Avatar'
+import { AddressAutocomplete, type AddressResult } from './AddressAutocomplete'
 import { cn, todayISO } from '@/lib/utils'
 import { useRoleLabel } from '@/hooks/useLabels'
 
@@ -31,6 +32,11 @@ const EMPTY: Omit<Employee, 'id' | 'created_at' | 'updated_at'> = {
   hired_at: todayISO(),
   date_of_birth: null,
   status: 'active',
+  address: null,
+  city: null,
+  country: null,
+  latitude: null,
+  longitude: null,
 }
 
 export function EmployeeForm({
@@ -166,6 +172,30 @@ export function EmployeeForm({
           ))}
         </div>
       </div>
+
+      <AddressAutocomplete
+        label={t('common.address')}
+        value={state.address ?? ''}
+        onChange={(v) => {
+          // Free-form edit — clear lat/lng so a stale pin doesn't stay if
+          // the user types over the field without picking from the dropdown
+          set('address', v)
+          if (state.latitude !== null || state.longitude !== null) {
+            set('latitude', null)
+            set('longitude', null)
+            set('city', null)
+            set('country', null)
+          }
+        }}
+        onSelect={(r: AddressResult) => {
+          set('address', r.address)
+          set('city', r.city)
+          set('country', r.country)
+          set('latitude', r.latitude)
+          set('longitude', r.longitude)
+        }}
+        hint={t('address.hint')}
+      />
 
       <Textarea label={t('employee_form.notes')} rows={2} placeholder={t('employee_form.notes_ph')} />
 

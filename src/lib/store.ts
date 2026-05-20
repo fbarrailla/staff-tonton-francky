@@ -145,7 +145,7 @@ export const mutate = {
     const client = requireClient()
     const { data, error } = await client
       .from('employees')
-      .insert(stripOptional(input, ['date_of_birth']))
+      .insert(stripOptional(input, ['date_of_birth', 'address', 'city', 'country', 'latitude', 'longitude']))
       .select()
       .single()
     if (error) throw new Error(error.message)
@@ -160,7 +160,7 @@ export const mutate = {
     const client = requireClient()
     const { data, error } = await client
       .from('employees')
-      .update(stripOptional(patch, ['date_of_birth']))
+      .update(stripOptional(patch, ['date_of_birth', 'address', 'city', 'country', 'latitude', 'longitude']))
       .eq('id', id)
       .select()
       .single()

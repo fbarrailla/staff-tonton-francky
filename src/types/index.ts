@@ -47,6 +47,12 @@ export interface Employee {
   hired_at: string // ISO date
   date_of_birth: string | null // ISO date
   status: EmployeeStatus
+  // Address (Photon autocomplete fills all five at once)
+  address: string | null      // human-readable full address
+  city: string | null
+  country: string | null
+  latitude: number | null
+  longitude: number | null
   created_at: string
   updated_at: string
 }

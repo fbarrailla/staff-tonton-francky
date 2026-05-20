@@ -39,7 +39,13 @@
     "updated": "Updated",
     "date_of_birth": "Date of birth",
     "age_years_one": "{{count}} year",
-    "age_years_other": "{{count}} years"
+    "age_years_other": "{{count}} years",
+    "address": "Address"
+  },
+  "address": {
+    "placeholder": "Type a street, a city…",
+    "hint": "Pick a result from the list to pin the person on the map.",
+    "no_results": "No results — try a more specific query."
   },
   "errors": {
     "generic": "Something went wrong",
@@ -198,6 +204,11 @@
     "birthdays_turns": "turns {{age}}",
     "birthdays_turns_one": "turns {{age}}",
     "birthdays_see_all": "See all →",
+    "map_title": "Team around the world",
+    "map_subtitle_one": "1 person located out of {{total}}",
+    "map_subtitle_other": "{{count}} people located out of {{total}}",
+    "map_empty_title": "No address set yet",
+    "map_empty_body": "Edit an employee's profile and pick their address from the autocomplete to drop them on the map.",
     "see_team": "See the whole team →",
     "leave_badge": "Leave",
     "leave_pending_badge": "Pending",
