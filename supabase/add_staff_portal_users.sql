@@ -43,7 +43,8 @@ declare
     'rahmattz321@gmail.com',
     'jungselly865@gmail.com',
     'krisno0611@gmail.com',
-    'msvictoria.salazar@gmail.com'
+    'msvictoria.salazar@gmail.com',
+    'oktavianingsih171096@gmail.com'
   ];
   v_email text;
   v_uid   uuid;
@@ -144,7 +145,8 @@ from (
     ('nanabymoon@gmail.com'),('nicolasfleurie1@gmail.com'),
     ('novitaputrikusuma@gmail.com'),('punitpunia005@gmail.com'),
     ('rahmattz321@gmail.com'),('jungselly865@gmail.com'),
-    ('krisno0611@gmail.com'),('msvictoria.salazar@gmail.com')
+    ('krisno0611@gmail.com'),('msvictoria.salazar@gmail.com'),
+    ('oktavianingsih171096@gmail.com')
 ) as v(email)
 left join auth.users u on u.email = v.email
 order by v.email;
