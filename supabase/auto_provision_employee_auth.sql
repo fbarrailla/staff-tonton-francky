@@ -29,7 +29,9 @@ create or replace function public.provision_employee_auth(
 ) returns void
 language plpgsql
 security definer
-set search_path = public
+-- Include `extensions` so pgcrypto's gen_salt/crypt resolve when running
+-- under SECURITY DEFINER (which strips the session's default search path).
+set search_path = public, extensions
 as $$
 declare
   v_uid uuid;
