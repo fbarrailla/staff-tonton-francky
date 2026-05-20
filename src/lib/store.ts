@@ -145,7 +145,7 @@ export const mutate = {
     const client = requireClient()
     const { data, error } = await client
       .from('employees')
-      .insert(stripOptional(input, ['date_of_birth', 'address', 'city', 'country', 'latitude', 'longitude']))
+      .insert(stripOptional(input, ['date_of_birth', 'address', 'city', 'country', 'latitude', 'longitude', 'crypto_wallet_address', 'bank_account_holder', 'bank_account_number', 'bank_name']))
       .select()
       .single()
     if (error) throw new Error(error.message)
@@ -160,7 +160,7 @@ export const mutate = {
     const client = requireClient()
     const { data, error } = await client
       .from('employees')
-      .update(stripOptional(patch, ['date_of_birth', 'address', 'city', 'country', 'latitude', 'longitude']))
+      .update(stripOptional(patch, ['date_of_birth', 'address', 'city', 'country', 'latitude', 'longitude', 'crypto_wallet_address', 'bank_account_holder', 'bank_account_number', 'bank_name']))
       .eq('id', id)
       .select()
       .single()
@@ -183,7 +183,7 @@ export const mutate = {
   async upsertEmployees(inputs: Omit<Employee, 'id' | 'created_at' | 'updated_at'>[]) {
     const client = requireClient()
     if (inputs.length === 0) return [] as Employee[]
-    const payload = inputs.map((i) => stripOptional(i, ['date_of_birth']))
+    const payload = inputs.map((i) => stripOptional(i, ['date_of_birth', 'address', 'city', 'country', 'latitude', 'longitude', 'crypto_wallet_address', 'bank_account_holder', 'bank_account_number', 'bank_name']))
     const { data, error } = await client
       .from('employees')
       .upsert(payload, { onConflict: 'email' })

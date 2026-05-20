@@ -53,6 +53,11 @@ export interface Employee {
   country: string | null
   latitude: number | null
   longitude: number | null
+  // Payment info — sensitive, currently same RLS as the rest of the row
+  crypto_wallet_address: string | null
+  bank_account_holder: string | null
+  bank_account_number: string | null
+  bank_name: string | null
   created_at: string
   updated_at: string
 }

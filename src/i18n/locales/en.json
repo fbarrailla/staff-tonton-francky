@@ -286,7 +286,16 @@
     "status_inactive": "Inactive",
     "status_approved": "Approved",
     "status_pending": "Pending",
-    "status_rejected": "Rejected"
+    "status_rejected": "Rejected",
+    "payment_title": "Payment",
+    "payment_subtitle": "Sensitive details — for payroll use only.",
+    "payment_crypto": "Crypto",
+    "payment_bank_holder": "Holder",
+    "payment_bank_iban": "IBAN / number",
+    "payment_bank_name": "Bank",
+    "payment_empty": "No payment details on file yet.",
+    "payment_copy": "Copy",
+    "payment_copied": "Copied"
   },
   "employee_form": {
     "profile_picture": "Profile picture",
@@ -311,7 +320,17 @@
     "new_skill_ph": "New skill — press Enter to add",
     "add_skill": "Add",
     "notes": "Internal notes (optional)",
-    "notes_ph": "Specific availability, important notes…"
+    "notes_ph": "Specific availability, important notes…",
+    "payment_title": "Payment",
+    "payment_subtitle": "Bank details and crypto wallet — visible to every backoffice user.",
+    "crypto_wallet": "Crypto wallet address",
+    "crypto_wallet_ph": "0x… or another on-chain address",
+    "bank_account_holder": "Account holder",
+    "bank_account_holder_ph": "Full name on the account",
+    "bank_account_number": "Account number / IBAN",
+    "bank_account_number_ph": "FR76 1234 5678 9012 3456 7890 123",
+    "bank_name": "Bank",
+    "bank_name_ph": "Bank name"
   },
   "calendar": {
     "eyebrow": "Calendar · {{year}}",

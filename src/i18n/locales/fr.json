@@ -287,7 +287,16 @@
     "status_inactive": "Inactif·ve",
     "status_approved": "Approuvé",
     "status_pending": "En attente",
-    "status_rejected": "Refusé"
+    "status_rejected": "Refusé",
+    "payment_title": "Paiement",
+    "payment_subtitle": "Coordonnées sensibles — à utiliser pour la paie uniquement.",
+    "payment_crypto": "Crypto",
+    "payment_bank_holder": "Titulaire",
+    "payment_bank_iban": "IBAN / numéro",
+    "payment_bank_name": "Banque",
+    "payment_empty": "Aucune coordonnée renseignée pour l'instant.",
+    "payment_copy": "Copier",
+    "payment_copied": "Copié"
   },
   "employee_form": {
     "profile_picture": "Photo de profil",
@@ -312,7 +321,17 @@
     "new_skill_ph": "Nouvelle compétence — Entrée pour ajouter",
     "add_skill": "Ajouter",
     "notes": "Notes internes (optionnel)",
-    "notes_ph": "Disponibilités particulières, mentions importantes…"
+    "notes_ph": "Disponibilités particulières, mentions importantes…",
+    "payment_title": "Paiement",
+    "payment_subtitle": "Coordonnées bancaires et portefeuille crypto — visibles par tous les utilisateurs du backoffice.",
+    "crypto_wallet": "Adresse de portefeuille crypto",
+    "crypto_wallet_ph": "0x… ou autre adresse on-chain",
+    "bank_account_holder": "Titulaire du compte",
+    "bank_account_holder_ph": "Nom complet sur le compte",
+    "bank_account_number": "Numéro de compte / IBAN",
+    "bank_account_number_ph": "FR76 1234 5678 9012 3456 7890 123",
+    "bank_name": "Banque",
+    "bank_name_ph": "Nom de la banque"
   },
   "calendar": {
     "eyebrow": "Calendrier · {{year}}",

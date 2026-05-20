@@ -37,6 +37,10 @@ const EMPTY: Omit<Employee, 'id' | 'created_at' | 'updated_at'> = {
   country: null,
   latitude: null,
   longitude: null,
+  crypto_wallet_address: null,
+  bank_account_holder: null,
+  bank_account_number: null,
+  bank_name: null,
 }
 
 export function EmployeeForm({
@@ -196,6 +200,52 @@ export function EmployeeForm({
         }}
         hint={t('address.hint')}
       />
+
+      {/* Payment — sensitive */}
+      <div className="pt-2 border-t border-line">
+        <div className="flex items-baseline justify-between mb-3">
+          <div>
+            <h3 className="display text-[17px] text-ink">{t('employee_form.payment_title')}</h3>
+            <p className="text-[11.5px] text-ink-faint mt-0.5 max-w-prose">
+              {t('employee_form.payment_subtitle')}
+            </p>
+          </div>
+        </div>
+        <div className="grid sm:grid-cols-2 gap-4">
+          <Input
+            label={t('employee_form.crypto_wallet')}
+            className="sm:col-span-2"
+            value={state.crypto_wallet_address ?? ''}
+            onChange={(e) => set('crypto_wallet_address', e.target.value || null)}
+            placeholder={t('employee_form.crypto_wallet_ph')}
+            autoComplete="off"
+            spellCheck={false}
+          />
+          <Input
+            label={t('employee_form.bank_account_holder')}
+            value={state.bank_account_holder ?? ''}
+            onChange={(e) => set('bank_account_holder', e.target.value || null)}
+            placeholder={t('employee_form.bank_account_holder_ph')}
+            autoComplete="off"
+          />
+          <Input
+            label={t('employee_form.bank_name')}
+            value={state.bank_name ?? ''}
+            onChange={(e) => set('bank_name', e.target.value || null)}
+            placeholder={t('employee_form.bank_name_ph')}
+            autoComplete="off"
+          />
+          <Input
+            label={t('employee_form.bank_account_number')}
+            className="sm:col-span-2"
+            value={state.bank_account_number ?? ''}
+            onChange={(e) => set('bank_account_number', e.target.value || null)}
+            placeholder={t('employee_form.bank_account_number_ph')}
+            autoComplete="off"
+            spellCheck={false}
+          />
+        </div>
+      </div>
 
       <Textarea label={t('employee_form.notes')} rows={2} placeholder={t('employee_form.notes_ph')} />
 

@@ -253,6 +253,10 @@ export async function parseEmployeesXlsx(file: File): Promise<ParseResult> {
       country: null,
       latitude: null,
       longitude: null,
+      crypto_wallet_address: null,
+      bank_account_holder: null,
+      bank_account_number: null,
+      bank_name: null,
     })
   }
 

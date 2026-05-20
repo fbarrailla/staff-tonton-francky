@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
   ArrowLeft, Edit3, Mail, Phone, Trash2, CalendarDays, Stethoscope, Plane, Plus,
-  Calendar as CalendarIcon,
+  Calendar as CalendarIcon, Wallet, Landmark, ClipboardCopy, Check,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Layout } from '@/components/Layout'
@@ -199,6 +199,8 @@ export function EmployeeDetail() {
               </Button>
             </div>
           </div>
+
+          <PaymentCard employee={employee} />
         </div>
 
         <div className="space-y-6">
@@ -305,5 +307,68 @@ export function EmployeeDetail() {
           onCancel={() => setAddSick(false)} />
       </Dialog>
     </Layout>
+  )
+}
+
+function PaymentCard({ employee }: { employee: Employee }) {
+  const { t } = useTranslation()
+  const [copied, setCopied] = useState<string | null>(null)
+
+  const rows: { key: string; icon: React.ReactNode; label: string; value: string | null }[] = [
+    { key: 'crypto', icon: <Wallet size={13} />,   label: t('employee_detail.payment_crypto'),     value: employee.crypto_wallet_address },
+    { key: 'holder', icon: <Landmark size={13} />, label: t('employee_detail.payment_bank_holder'), value: employee.bank_account_holder },
+    { key: 'iban',   icon: <Landmark size={13} />, label: t('employee_detail.payment_bank_iban'),   value: employee.bank_account_number },
+    { key: 'bank',   icon: <Landmark size={13} />, label: t('employee_detail.payment_bank_name'),   value: employee.bank_name },
+  ]
+  const hasAny = rows.some((r) => r.value && r.value.trim())
+
+  async function copy(value: string, key: string) {
+    try {
+      await navigator.clipboard.writeText(value)
+      setCopied(key)
+      setTimeout(() => setCopied((k) => (k === key ? null : k)), 1500)
+    } catch {
+      /* clipboard unavailable — silent */
+    }
+  }
+
+  return (
+    <div className="surface-card p-5">
+      <div className="flex items-baseline justify-between mb-1">
+        <div className="label-caps">{t('employee_detail.payment_title')}</div>
+      </div>
+      <p className="text-[11px] text-ink-faint mb-3">{t('employee_detail.payment_subtitle')}</p>
+      {!hasAny ? (
+        <p className="text-[13px] text-ink-faint italic">{t('employee_detail.payment_empty')}</p>
+      ) : (
+        <ul className="space-y-2.5">
+          {rows.map((r) => {
+            if (!r.value || !r.value.trim()) return null
+            const isCopied = copied === r.key
+            return (
+              <li key={r.key} className="group">
+                <div className="flex items-baseline gap-1.5 text-[11px] uppercase tracking-caps text-ink-faint mb-0.5">
+                  <span className="text-tonton-500">{r.icon}</span>
+                  <span>{r.label}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[13px] text-ink font-mono break-all leading-snug flex-1 min-w-0">
+                    {r.value}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => void copy(r.value!, r.key)}
+                    className="opacity-0 group-hover:opacity-100 transition-opacity text-ink-faint hover:text-ink p-1 rounded shrink-0"
+                    aria-label={t('employee_detail.payment_copy')}
+                  >
+                    {isCopied ? <Check size={12} className="text-working" /> : <ClipboardCopy size={12} />}
+                  </button>
+                </div>
+              </li>
+            )
+          })}
+        </ul>
+      )}
+    </div>
   )
 }
